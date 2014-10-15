@@ -1,0 +1,326 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Mengimplementasikan Clean URL Parameter Dengan Inca S2Rest Plugin - Dian Aditya</title>
+  <meta name="author" content="Dian Aditya">
+
+  
+  <meta name="description" content="Sudah pernah baca blog saya sebelumnya tentang Memanfaatkan Struts Action Mapper untuk Membuat Clean URL? Beberapa waktu yang lalu Meruvian &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://diian.org/blog/2012/06/12/mengimplementasikan-clean-url-parameter-dengan-inca-s2rest-plugin">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Dian Aditya" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet" type="text/css">
+<!--- MathJax Configuration -->
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+<meta property="fb:app_id" content="279596272235062" />
+
+  
+
+</head>
+
+<body   class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Dian Aditya</a></h1>
+  
+    <h2>Penjahit Digital.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+  
+  
+  
+  
+<ul class="subscription">
+  <li><a href="https://github.com/dianw" rel="subscribe-github" title="@dianw on GitHub">GitHub</a></li>
+</ul>
+  
+  
+  
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:diian.org" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      
+        <h1 class="entry-title">Mengimplementasikan Clean URL Parameter Dengan Inca S2Rest Plugin</h1>
+      
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Sudah pernah baca blog saya sebelumnya tentang <code>Memanfaatkan Struts Action Mapper untuk Membuat Clean URL?</code></p>
+
+<p>Beberapa waktu yang lalu Meruvian melaunching Inca S2Rest Plugin, ya plugin untuk Struts2 dengan fitur utama mengadopsikan arsitektur REST ke dalam Struts2 tentunya. Secara garis besar plugin ini bisa dibilang sebagai fusion-nya Convention Plugin dengan Rest Plugin yang sudah ada sejak dahulu kala, yang jelas dengan implementasi berbeda serta fitur yang jelas lebih banyak, ceile. Seperti harapan yang menjadi kenyataan, setelah beberapa tahun terakhir kita utak-atik action mapper dan kawan-kawannya akhirnya jadilah sebuah plugin untuk mengisi celah fitur yang tidak disertakan pada plugin Struts2 yang lain.</p>
+
+<p>Pada artikel kali ini saya &lsquo;hanya&rsquo; akan membahas salah satu fitur dari Inca yaitu dukungan untuk membuat clean url parameter. Nanti dulu deh, untuk fitur-fitur lain akan saya kupas lebih tajam dalam Developer Blog, terpisah dari blog ini, untuk saat ini bisa main-main dulu ke wikinya.</p>
+
+<p>Ok, kembali ke laptop, Inca S2Rest menyediakan fitur anotasi untuk membuat konfigurasi dapat di-embed ke dalam kode java, sehingga meminimalisir konfigurasi xml yang harus dimaintain oleh developer. Salah satu anotasi yang powerful adalah @ActionParam, anotasi ini berada pada level field untuk menangkap request parameter yang dikirim ke dalam action class, yap no getter and setter anymore. Anotasi ini membantu kita untuk mendapatkan request parameter, lalu bagaimana dengan membuat clean url?</p>
+
+<p>Saya akan membuat sebuah contoh kasus sebuah action untuk menampilkan sebuah artikel berdasarkan tanggal lengkap beserta id dari artikel. Pertama kita tentukan format url yang akan digunakan: <code>/articles/{tahun}/{bulan}/{tanggal}/{id}</code></p>
+
+<p>Saya kutip sedikit dari wiki:</p>
+
+<blockquote><p>By default, the Inca S2RestPlugin use Regex Pattern Matcher for its Pattern Matcher.</p></blockquote>
+
+<p>Sehingga pattern yang sudah saya tulis sebelumnya sudah memenuhi kualifikasi untuk menentukan sebuah action sesuai dengan format url. Waktunya membatik:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nd">@Action</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&quot;/article&quot;</span><span class="o">)</span> <span class="c1">// Deklarasi action class</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ArticleAction</span> <span class="o">{</span>
+</span><span class='line'>  <span class="nd">@ActionParam</span><span class="o">(</span><span class="s">&quot;th&quot;</span><span class="o">)</span>
+</span><span class='line'>  <span class="kd">private</span> <span class="kt">int</span> <span class="n">year</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nd">@ActionParam</span><span class="o">(</span><span class="s">&quot;bln&quot;</span><span class="o">)</span>
+</span><span class='line'>  <span class="kd">private</span> <span class="kt">int</span> <span class="n">month</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nd">@ActionParam</span><span class="o">(</span><span class="s">&quot;tgl&quot;</span><span class="o">)</span>
+</span><span class='line'>  <span class="kd">private</span> <span class="kt">int</span> <span class="n">date</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nd">@ActionParam</span><span class="o">(</span><span class="s">&quot;id&quot;</span><span class="o">)</span>
+</span><span class='line'>  <span class="kd">private</span> <span class="n">String</span> <span class="n">articleId</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nd">@Action</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&quot;/{th}/{bln}/{tgl}/{id}&quot;</span><span class="o">,</span> <span class="n">method</span> <span class="o">=</span> <span class="n">HttpMethod</span><span class="o">.</span><span class="na">GET</span><span class="o">)</span>
+</span><span class='line'>  <span class="kd">public</span> <span class="n">String</span> <span class="nf">showArticle</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>  <span class="c1">// lakukan sesuka hati disini</span>
+</span><span class='line'>  <span class="c1">// parameter akan dengan deklarasi @ActionParam akan terisi</span>
+</span><span class='line'>  <span class="c1">// apabila request url sudah sesuai dengan pattern pada</span>
+</span><span class='line'>  <span class="c1">// properti &#39;name&#39; dalam @Action</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Langkah terakhir adalah membuat skenario request dengan url (sebagai contoh): /article/2012/05/04/release-inca-sudirman-thamrin-ditutup-selama-sepekan.</p>
+
+<h3>Menggunakan URL Pattern Matcher Lain</h3>
+
+<p>Walaupun secara default Inca S2Rest menggunakan regex pattern matcher, developer dapat merubah dengan implementasi pattern matcher lain cukup dengan merubah konfigurasi:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;constant</span> <span class="na">name=</span><span class="s">&quot;struts.patternMatcher&quot;</span> <span class="na">value=</span><span class="s">&quot;struts&quot;</span> <span class="nt">/&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Contoh diatas apabila developer menghendaki untuk menggunakan struts (default) pattern matcher, maka contoh kode yang harus digunakan adalah:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nd">@Action</span><span class="o">(</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;/article/*/*/*/*&quot;</span><span class="o">,</span> <span class="n">params</span><span class="o">=</span> <span class="o">{</span>
+</span><span class='line'>  <span class="nd">@Param</span><span class="o">(</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;th&quot;</span><span class="o">,</span> <span class="n">value</span><span class="o">=</span><span class="s">&quot;{1}&quot;</span><span class="o">),</span>
+</span><span class='line'>  <span class="nd">@Param</span><span class="o">(</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;bln&quot;</span><span class="o">,</span> <span class="n">value</span><span class="o">=</span><span class="s">&quot;{2}&quot;</span><span class="o">),</span>
+</span><span class='line'>  <span class="nd">@Param</span><span class="o">(</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;tgl&quot;</span><span class="o">,</span> <span class="n">value</span><span class="o">=</span><span class="s">&quot;{3}&quot;</span><span class="o">),</span>
+</span><span class='line'>  <span class="nd">@Param</span><span class="o">(</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;id&quot;</span><span class="o">,</span> <span class="n">value</span><span class="o">=</span><span class="s">&quot;{4}&quot;</span><span class="o">)</span>
+</span><span class='line'><span class="o">})</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Selamat mecoba dan mengimplementasikan Inca S2Rest Plugin pada aplikasi Struts2 anda.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+
+
+  <span class="byline author vcard">Authored by <span class="fn">
+  
+    Dian Aditya
+  
+  </span></span>
+
+
+      
+
+
+
+
+
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://diian.org/blog/2012/06/12/mengimplementasikan-clean-url-parameter-dengan-inca-s2rest-plugin/" data-via="" data-counturl="http://diian.org/blog/2012/06/12/mengimplementasikan-clean-url-parameter-dengan-inca-s2rest-plugin/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+    <div class="fb-like" data-layout="button_count" data-send="false" data-width="300" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/04/15/kekuatan-dibalik-proxy-dalam-java/" title="Previous Post: Kekuatan dibalik Proxy dalam Java">&laquo; Kekuatan dibalik Proxy dalam Java</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2012/06/28/pakai-application-server-yang-mana%3F-%28ala-saya%29/" title="Next Post: Pakai Application Server yang Mana? (Ala Saya)">Pakai Application Server yang Mana? (Ala Saya) &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+
+
+  <section>
+    <h1>Comments</h1>
+    <div id="facebook_comments" aria-live="polite">
+      <noscript>Please enable JavaScript to view the comments powered by facebook</a></noscript>
+<div
+  class="fb-comments"
+  data-href="http://diian.org/blog/2012/06/12/mengimplementasikan-clean-url-parameter-dengan-inca-s2rest-plugin/"
+  data-num-posts="5"
+  data-width="100%"></div>
+    </div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Dian Aditya -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> | Themed with <a href="https://github.com/lucaslew/whitespace">Whitespace</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=279596272235062&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

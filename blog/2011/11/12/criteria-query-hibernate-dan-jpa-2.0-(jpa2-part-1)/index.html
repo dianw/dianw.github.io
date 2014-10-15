@@ -1,0 +1,331 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Criteria Query, Hibernate Dan JPA 2.0 (JPA2 Part 1) - Dian Aditya</title>
+  <meta name="author" content="Dian Aditya">
+
+  
+  <meta name="description" content="Salah satu tambahan terbesar dari spesifikasi JPA (Java Persistence API) versi 2.0 adalah criteria query. Dirilis pada Desember 2009, JPA 2.0 &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://diian.org/blog/2011/11/12/criteria-query-hibernate-dan-jpa-2.0-%28jpa2-part-1%29">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Dian Aditya" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet" type="text/css">
+<!--- MathJax Configuration -->
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+<meta property="fb:app_id" content="279596272235062" />
+
+  
+
+</head>
+
+<body   class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Dian Aditya</a></h1>
+  
+    <h2>Penjahit Digital.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+  
+  
+  
+  
+<ul class="subscription">
+  <li><a href="https://github.com/dianw" rel="subscribe-github" title="@dianw on GitHub">GitHub</a></li>
+</ul>
+  
+  
+  
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:diian.org" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      
+        <h1 class="entry-title">Criteria Query, Hibernate Dan JPA 2.0 (JPA2 Part 1)</h1>
+      
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Salah satu tambahan terbesar dari spesifikasi JPA (Java Persistence API) versi 2.0 adalah criteria query. Dirilis pada Desember 2009, JPA 2.0 menyediakan API baru yang memungkinkan penggunaan criteria query, meskipun kita tahu pada framework ORM seperti Hibernate sudah terlebih dahulu menyediakan criteria query sejak versi 3.0. Hmm, bagaimanapun JPA adalah spesifikasi standard untuk Persistence yang mana dengan JPA kita bisa memilih JPA provider seperti Hibernate, EclipseLink, OpenJPA, DataNucleus, ataupun ObjectDB sesuka hati tanpa perlu mengganti banyak konfigurasi karena seluruh abstraksi ada di bawah package javax.persistence.*</p>
+
+<p>Pada postingan kali ini saya akan mengulas tentang penggunaan Criteria Query pada JPA (dengan Hibernate sebagai persistence provider) dan Qriteria Query pada Hibernate (native).</p>
+
+<p>Sedikit berbeda dengan JPA 1.0, walaupun diklaim sebagai vendor-independent, kita tidak akan menemukan javax.persistence:javax.persistence:2.0 pada Maven Central, melainkan kita harus mencarinya pada masing-masing ORM vendor. Sebagai contoh jika kita menggunakan hibernate maka artifact untuk JPA 2.0 adalah</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;dependency&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;groupid&gt;</span>org.hibernate.javax.persistence<span class="nt">&lt;/groupid&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;artifactid&gt;</span>hibernate-jpa-2.0-api<span class="nt">&lt;/artifactid&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;version&gt;</span>1.0.0.Final<span class="nt">&lt;/version&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;type&gt;</span>jar<span class="nt">&lt;/type&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;scope&gt;</span>compile<span class="nt">&lt;/scope&gt;</span>
+</span><span class='line'><span class="nt">&lt;/dependency&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Oke marilah langsung saja kita menuju ke area perangnya, dimisalkan saya memiliki sebuah entity (karyawan).</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nd">@Entity</span>
+</span><span class='line'><span class="nd">@Table</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&quot;pegawai&quot;</span><span class="o">)</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Pegawai</span> <span class="o">{</span>
+</span><span class='line'>  <span class="kd">private</span> <span class="kt">long</span> <span class="n">id</span><span class="o">;</span>
+</span><span class='line'>  <span class="kd">private</span> <span class="n">String</span> <span class="n">nama</span><span class="o">;</span>
+</span><span class='line'>  <span class="kd">private</span> <span class="n">String</span> <span class="n">telepon</span><span class="o">;</span>
+</span><span class='line'>  <span class="kd">private</span> <span class="n">String</span> <span class="n">alamat</span><span class="o">;</span>
+</span><span class='line'>  <span class="c1">// getter dan setter</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Selanjutnya mari membuat sebuah JPA Query untuk menangani sebuah pencarian berdasarkan nama atau alamat pegawai.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>SELECT p FROM Pegawai WHERE p.nama LIKE :nama OR p.alamat LIKE :alamat</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Criteria Query</h2>
+
+<h3>Hibernate</h3>
+
+<p>Citeria query pada hibernate umunya cukup mudah, kita tinggal mendefinisikan class entity pada saat pembuatan criteria, kemudian memasukkan masing-masing ekspresi menggunakan class <code>org.hibernate.Criterion</code>.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">pegawai</span><span class="o">&gt;</span> <span class="nf">getKaryawanByCriteriaH</span><span class="o">(</span><span class="n">String</span> <span class="n">nama</span><span class="o">,</span> <span class="n">String</span> <span class="n">alamat</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>  <span class="n">Session</span> <span class="n">session</span> <span class="o">=</span> <span class="n">sessionFactory</span><span class="o">.</span><span class="na">getCurrentSession</span><span class="o">();</span>
+</span><span class='line'>  <span class="n">Criteria</span> <span class="n">criteria</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="na">createCriteria</span><span class="o">(</span><span class="n">Pegawai</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'>  <span class="n">criteria</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">Restrictions</span><span class="o">.</span><span class="na">like</span><span class="o">(</span><span class="s">&quot;nama&quot;</span><span class="o">,</span> <span class="n">nama</span><span class="o">));</span>
+</span><span class='line'>  <span class="n">criteria</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">Restrictions</span><span class="o">.</span><span class="na">like</span><span class="o">(</span><span class="s">&quot;alamat&quot;</span><span class="o">,</span> <span class="n">alamat</span><span class="o">));</span>
+</span><span class='line'>  <span class="k">return</span> <span class="n">criteria</span><span class="o">.</span><span class="na">list</span><span class="o">();</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>JPA</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Pegawai</span><span class="o">&gt;</span> <span class="nf">getKaryawanByCriteria</span><span class="o">(</span><span class="n">String</span> <span class="n">nama</span><span class="o">,</span> <span class="n">String</span> <span class="n">alamat</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>  <span class="n">CriteriaBuilder</span> <span class="n">builder</span> <span class="o">=</span> <span class="n">entityManager</span><span class="o">.</span><span class="na">getCriteriaBuilder</span><span class="o">();</span>
+</span><span class='line'>  <span class="n">CriteriaQuery</span><span class="o">&lt;</span><span class="n">Pegawai</span><span class="o">&gt;</span> <span class="n">query</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="na">createQuery</span><span class="o">(</span><span class="n">Pegawai</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'>  <span class="n">Root</span> <span class="o">&lt;</span><span class="n">Pegawai</span><span class="o">&gt;</span> <span class="n">root</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="na">from</span><span class="o">(</span><span class="n">Pegawai</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'>  <span class="n">query</span><span class="o">.</span><span class="na">where</span><span class="o">(</span><span class="n">builder</span><span class="o">.</span><span class="na">like</span><span class="o">(</span><span class="n">root</span><span class="o">.&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="n">get</span><span class="o">(</span><span class="s">&quot;nama&quot;</span><span class="o">),</span> <span class="n">nama</span><span class="o">),</span> <span class="n">builder</span><span class="o">.</span><span class="na">like</span><span class="o">(</span><span class="n">root</span><span class="o">.&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="n">get</span><span class="o">(</span><span class="s">&quot;alamat&quot;</span><span class="o">),</span> <span class="n">alamat</span><span class="o">));</span>
+</span><span class='line'>  <span class="k">return</span> <span class="n">entityManager</span><span class="o">.</span><span class="na">createQuery</span><span class="o">(</span><span class="n">query</span><span class="o">).</span><span class="na">getResultList</span><span class="o">();</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Sekilas tidak jauh berbeda citeria query pada Hibernate dengan JPA, akan tetapi sedikit yang terlihat jelas spesifikasi JPA sedikit lebih kompleks (baca: njelimet) dibandingkan criteria query pada Hibernate.</p>
+
+<h3>JPA Metamodel</h3>
+
+<p>Criteria Query pada JPA berbasiskan metamodel dari class yang telah terdaftar pada Persistence Unit. JPA 2 mendefinisikan typesafe Criteria API baru yang mengizinkan criteria query dibangun secara rapi/kuat. Penggunaan meta model pada JPA dan beberapa metode otomasi pembuatannya akan saya bahas pada postingan selanjutnya.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+
+
+  <span class="byline author vcard">Authored by <span class="fn">
+  
+    Dian Aditya
+  
+  </span></span>
+
+
+      
+
+
+
+
+
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://diian.org/blog/2011/11/12/criteria-query-hibernate-dan-jpa-2.0-%28jpa2-part-1%29/" data-via="" data-counturl="http://diian.org/blog/2011/11/12/criteria-query-hibernate-dan-jpa-2.0-%28jpa2-part-1%29/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+    <div class="fb-like" data-layout="button_count" data-send="false" data-width="300" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2011/11/08/deploy-cimande-pada-weblogic-10.3/" title="Previous Post: Deploy Cimande pada Weblogic 10.3">&laquo; Deploy Cimande pada Weblogic 10.3</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2012/01/16/yang-sering-dilakukan-siswa-dan-yang-sering-diabaikan-oleh-pembimbing-dalam-tugas-akhir/" title="Next Post: Yang Sering Dilakukan Siswa dan yang Sering Diabaikan oleh Pembimbing dalam Tugas Akhir">Yang Sering Dilakukan Siswa dan yang Sering Diabaikan oleh Pembimbing dalam Tugas Akhir &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+
+
+  <section>
+    <h1>Comments</h1>
+    <div id="facebook_comments" aria-live="polite">
+      <noscript>Please enable JavaScript to view the comments powered by facebook</a></noscript>
+<div
+  class="fb-comments"
+  data-href="http://diian.org/blog/2011/11/12/criteria-query-hibernate-dan-jpa-2.0-%28jpa2-part-1%29/"
+  data-num-posts="5"
+  data-width="100%"></div>
+    </div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Dian Aditya -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> | Themed with <a href="https://github.com/lucaslew/whitespace">Whitespace</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=279596272235062&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

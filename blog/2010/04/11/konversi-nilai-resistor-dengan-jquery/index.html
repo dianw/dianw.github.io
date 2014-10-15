@@ -1,0 +1,702 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Konversi Nilai Resistor Dengan JQuery - Dian Aditya</title>
+  <meta name="author" content="Dian Aditya">
+
+  
+  <meta name="description" content="&nbsp;&nbsp;&nbsp; Beberapa waktu yang lalu saya mendapatkan tugas dari Bapak Guru tercinta :p untuk membuat sebuah aplikasi yang dapat merubah &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://diian.org/blog/2010/04/11/konversi-nilai-resistor-dengan-jquery">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Dian Aditya" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet" type="text/css">
+<!--- MathJax Configuration -->
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+<meta property="fb:app_id" content="279596272235062" />
+
+  
+
+</head>
+
+<body   class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Dian Aditya</a></h1>
+  
+    <h2>Penjahit Digital.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+  
+  
+  
+  
+<ul class="subscription">
+  <li><a href="https://github.com/dianw" rel="subscribe-github" title="@dianw on GitHub">GitHub</a></li>
+</ul>
+  
+  
+  
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:diian.org" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      
+        <h1 class="entry-title">Konversi Nilai Resistor Dengan JQuery</h1>
+      
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>&nbsp;&nbsp;&nbsp; Beberapa waktu yang lalu saya mendapatkan tugas dari Bapak Guru tercinta :p untuk membuat sebuah aplikasi yang dapat merubah inputan dari user berupa angka menjadi gelang warna pada resistor, sempat kepikiran untuk membangun aplikasi tersebut menggunakan swing, tapi ga tau kenapa tiba-tiba seperti ada bisikan di otak saya, ?gimana kalo makan dulu bro?? dan saat itu juga saya berpikir ?gmn kalo pake JQuery aja?? (g nyambung :D). Dan Walhasil, abrakadabra, jadilah sebuah mahakarya yang sangat dahsyat!</p>
+
+<div id="container" class="well">
+ <style type="text/css">
+            .gelang {
+                background-color:transparent;
+                width:20px;
+                height:100px;
+                margin:1px;
+                float:left;
+                display:none;
+                border-style:solid;
+                border-width:1px;
+            }
+            label {
+                font-weight:bold;
+            }
+        </style>
+ <script type="text/javascript">
+            var warna = [
+                "black",
+                "#993300",
+                "red",
+                "#ff8a00",
+                "yellow",
+                "green",
+                "blue",
+                "purple",
+                "silver",
+                "white",
+                "#f6fd2e",
+                "#b6b6b6"
+            ];
+            function reset() {
+                $('#1, #2, #3, #4, #5').hide().css("background-color", "#FFFFFF");
+            }
+            function check(str) {
+                reset();
+                var inp = str;
+                var len = inp.length;
+                var gel = $('#jml').val();
+                $('#3').fadeIn();
+                if(len <= 2) {
+                    $('#1').css("background-color", warna[inp[0]]).fadeIn();
+                    $('#2').css("background-color", warna[inp[1]]).fadeIn();
+                  
+                } else {
+                    var temp = "";
+                    for(i = 0 ; i < len ; i++) {
+                        if(i < gel) {
+                            temp += inp[i];
+                        } else {
+                            temp += '0';
+                        }
+                    }
+                    $('#input').val(temp);
+                    var nol = len - gel;
+                    $('#1').css("background-color", warna[inp[0]]).fadeIn();
+                    $('#2').css("background-color", warna[inp[1]]).fadeIn();
+                  
+                    if(gel == 2) {
+                        $('#3').css("background-color", warna[nol]).fadeIn();
+                    } else {
+                        $('#3').css("background-color", warna[inp[2]]).fadeIn();
+                        $('#4').css("background-color", warna[nol]).fadeIn();
+                    }
+                    //alert(len - gel);
+                }
+            }
+            $(function() {
+                // $('#input').focus();
+                $('#input').keydown(function(e) {
+                  
+                    if(e.keyCode == 8) {
+                        return true;
+                    } else if(e.keyCode == 13) {
+                        $('#submit').click();
+                        return true;
+                    } else if(e.keyCode >= 48 && e.keyCode <= 57) {
+                        return true;
+                    }
+                    return false;
+                });
+                $('#jml').change(function() {
+                    if($(this).val() == 2) {
+                        $('#4').hide();
+                    } else {
+                        $('#4').show();
+                    }
+                    $('#submit').click();
+                }).change();
+                $('#toleransi').change(function() {
+                    $('#submit').click();
+                }).change();
+                $('#submit').click(function() {
+                    check($('#input').val());
+                    $('#5').css("background-color", warna[$('#toleransi').val()]).fadeIn();
+                });
+            });
+        </script>
+ <div style="text-align: center;">
+ 
+  <div>
+  
+   <label>
+ Nilai Hambatan : &nbsp;
+ <input type="text" size="10" id="input">
+ &nbsp; Ω
+ </label>
+  </div>
+  <div style="margin:20px;">
+  
+   <label>
+ Toleransi : &nbsp;
+ <select id="toleransi">
+ <option value="1">1%</option>
+ <option value="10">5%</option>
+ <option value="11">10%</option>
+ <option value="9">20%</option>
+ </select>
+ &nbsp;
+ </label>
+  </div>
+  <div style="margin:20px;">
+  
+   <label>
+ Jumlah Gelang Utama : &nbsp;
+ <select id="jml">
+ <option value="2">3</option>
+ <option value="3">4</option>
+ </select>
+ </label>
+  </div>
+  <div style="margin:20px;text-align:center;">
+  
+   <button id="submit">Submit</button>
+  </div>
+ </div>
+ <table align="center" id="tb">
+ 
+  <tbody>
+  
+   <tr>
+   
+    <td>
+     <div id="1" class="gelang"></div>
+     <div id="2" class="gelang"></div>
+     <div id="3" class="gelang"></div>
+     <div id="4" class="gelang"></div>
+     <div id="5" class="gelang"></div>
+ </td>
+   </tr>
+  </tbody>
+ </table>
+</div>
+
+
+<br>
+
+
+<p>Dan berikut source codenya :</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+<span class='line-number'>117</span>
+<span class='line-number'>118</span>
+<span class='line-number'>119</span>
+<span class='line-number'>120</span>
+<span class='line-number'>121</span>
+<span class='line-number'>122</span>
+<span class='line-number'>123</span>
+<span class='line-number'>124</span>
+<span class='line-number'>125</span>
+<span class='line-number'>126</span>
+<span class='line-number'>127</span>
+<span class='line-number'>128</span>
+<span class='line-number'>129</span>
+<span class='line-number'>130</span>
+<span class='line-number'>131</span>
+<span class='line-number'>132</span>
+<span class='line-number'>133</span>
+<span class='line-number'>134</span>
+<span class='line-number'>135</span>
+<span class='line-number'>136</span>
+<span class='line-number'>137</span>
+<span class='line-number'>138</span>
+<span class='line-number'>139</span>
+<span class='line-number'>140</span>
+<span class='line-number'>141</span>
+<span class='line-number'>142</span>
+<span class='line-number'>143</span>
+<span class='line-number'>144</span>
+<span class='line-number'>145</span>
+<span class='line-number'>146</span>
+<span class='line-number'>147</span>
+<span class='line-number'>148</span>
+<span class='line-number'>149</span>
+<span class='line-number'>150</span>
+<span class='line-number'>151</span>
+<span class='line-number'>152</span>
+<span class='line-number'>153</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;title&gt;</span>Converter<span class="nt">&lt;/title&gt;</span>
+</span><span class='line'><span class="nt">&lt;style </span><span class="na">type=</span><span class="s">&quot;text/css&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>            <span class="nc">.gelang</span> <span class="p">{</span>
+</span><span class='line'>                <span class="k">background-color</span><span class="o">:</span><span class="k">transparent</span><span class="p">;</span>
+</span><span class='line'>                <span class="k">width</span><span class="o">:</span><span class="m">20px</span><span class="p">;</span>
+</span><span class='line'>                <span class="k">height</span><span class="o">:</span><span class="m">100px</span><span class="p">;</span>
+</span><span class='line'>                <span class="k">margin</span><span class="o">:</span><span class="m">1px</span><span class="p">;</span>
+</span><span class='line'>                <span class="k">float</span><span class="o">:</span><span class="k">left</span><span class="p">;</span>
+</span><span class='line'>                <span class="k">display</span><span class="o">:</span><span class="k">none</span><span class="p">;</span>
+</span><span class='line'>                <span class="k">border-style</span><span class="o">:</span><span class="k">solid</span><span class="p">;</span>
+</span><span class='line'>                <span class="k">border-width</span><span class="o">:</span><span class="m">1px</span><span class="p">;</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>            <span class="nt">label</span> <span class="p">{</span>
+</span><span class='line'>                <span class="k">font-weight</span><span class="o">:</span><span class="k">bold</span><span class="p">;</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>        <span class="nt">&lt;/style&gt;</span>
+</span><span class='line'><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span> <span class="na">src=</span><span class="s">&quot;http://code.jquery.com/jquery-1.4.2.min.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+</span><span class='line'><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>            <span class="kd">var</span> <span class="nx">warna</span> <span class="o">=</span> <span class="p">[</span>
+</span><span class='line'>                <span class="s2">&quot;black&quot;</span><span class="p">,</span>
+</span><span class='line'>                <span class="s2">&quot;#993300&quot;</span><span class="p">,</span>
+</span><span class='line'>                <span class="s2">&quot;red&quot;</span><span class="p">,</span>
+</span><span class='line'>                <span class="s2">&quot;#ff8a00&quot;</span><span class="p">,</span>
+</span><span class='line'>                <span class="s2">&quot;yellow&quot;</span><span class="p">,</span>
+</span><span class='line'>                <span class="s2">&quot;green&quot;</span><span class="p">,</span>
+</span><span class='line'>                <span class="s2">&quot;blue&quot;</span><span class="p">,</span>
+</span><span class='line'>                <span class="s2">&quot;purple&quot;</span><span class="p">,</span>
+</span><span class='line'>                <span class="s2">&quot;silver&quot;</span><span class="p">,</span>
+</span><span class='line'>                <span class="s2">&quot;white&quot;</span><span class="p">,</span>
+</span><span class='line'>                <span class="s2">&quot;#f6fd2e&quot;</span><span class="p">,</span>
+</span><span class='line'>                <span class="s2">&quot;#b6b6b6&quot;</span>
+</span><span class='line'>            <span class="p">];</span>
+</span><span class='line'>            <span class="kd">function</span> <span class="nx">reset</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>                <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#1, #2, #3, #4, #5&#39;</span><span class="p">).</span><span class="nx">hide</span><span class="p">().</span><span class="nx">css</span><span class="p">(</span><span class="s2">&quot;background-color&quot;</span><span class="p">,</span> <span class="s2">&quot;#FFFFFF&quot;</span><span class="p">);</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>            <span class="kd">function</span> <span class="nx">check</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="nx">reset</span><span class="p">();</span>
+</span><span class='line'>                <span class="kd">var</span> <span class="nx">inp</span> <span class="o">=</span> <span class="nx">str</span><span class="p">;</span>
+</span><span class='line'>                <span class="kd">var</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">inp</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+</span><span class='line'>                <span class="kd">var</span> <span class="nx">gel</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#jml&#39;</span><span class="p">).</span><span class="nx">val</span><span class="p">();</span>
+</span><span class='line'>                <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#3&#39;</span><span class="p">).</span><span class="nx">fadeIn</span><span class="p">();</span>
+</span><span class='line'>                <span class="k">if</span><span class="p">(</span><span class="nx">len</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                    <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#1&#39;</span><span class="p">).</span><span class="nx">css</span><span class="p">(</span><span class="s2">&quot;background-color&quot;</span><span class="p">,</span> <span class="nx">warna</span><span class="p">[</span><span class="nx">inp</span><span class="p">[</span><span class="mi">0</span><span class="p">]]).</span><span class="nx">fadeIn</span><span class="p">();</span>
+</span><span class='line'>                    <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#2&#39;</span><span class="p">).</span><span class="nx">css</span><span class="p">(</span><span class="s2">&quot;background-color&quot;</span><span class="p">,</span> <span class="nx">warna</span><span class="p">[</span><span class="nx">inp</span><span class="p">[</span><span class="mi">1</span><span class="p">]]).</span><span class="nx">fadeIn</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>                    <span class="kd">var</span> <span class="nx">temp</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+</span><span class='line'>                    <span class="k">for</span><span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                        <span class="k">if</span><span class="p">(</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">gel</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                            <span class="nx">temp</span> <span class="o">+=</span> <span class="nx">inp</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+</span><span class='line'>                        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>                            <span class="nx">temp</span> <span class="o">+=</span> <span class="s1">&#39;0&#39;</span><span class="p">;</span>
+</span><span class='line'>                        <span class="p">}</span>
+</span><span class='line'>                    <span class="p">}</span>
+</span><span class='line'>                    <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#input&#39;</span><span class="p">).</span><span class="nx">val</span><span class="p">(</span><span class="nx">temp</span><span class="p">);</span>
+</span><span class='line'>                    <span class="kd">var</span> <span class="nx">nol</span> <span class="o">=</span> <span class="nx">len</span> <span class="o">-</span> <span class="nx">gel</span><span class="p">;</span>
+</span><span class='line'>                    <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#1&#39;</span><span class="p">).</span><span class="nx">css</span><span class="p">(</span><span class="s2">&quot;background-color&quot;</span><span class="p">,</span> <span class="nx">warna</span><span class="p">[</span><span class="nx">inp</span><span class="p">[</span><span class="mi">0</span><span class="p">]]).</span><span class="nx">fadeIn</span><span class="p">();</span>
+</span><span class='line'>                    <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#2&#39;</span><span class="p">).</span><span class="nx">css</span><span class="p">(</span><span class="s2">&quot;background-color&quot;</span><span class="p">,</span> <span class="nx">warna</span><span class="p">[</span><span class="nx">inp</span><span class="p">[</span><span class="mi">1</span><span class="p">]]).</span><span class="nx">fadeIn</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>                    <span class="k">if</span><span class="p">(</span><span class="nx">gel</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                        <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#3&#39;</span><span class="p">).</span><span class="nx">css</span><span class="p">(</span><span class="s2">&quot;background-color&quot;</span><span class="p">,</span> <span class="nx">warna</span><span class="p">[</span><span class="nx">nol</span><span class="p">]).</span><span class="nx">fadeIn</span><span class="p">();</span>
+</span><span class='line'>                    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>                        <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#3&#39;</span><span class="p">).</span><span class="nx">css</span><span class="p">(</span><span class="s2">&quot;background-color&quot;</span><span class="p">,</span> <span class="nx">warna</span><span class="p">[</span><span class="nx">inp</span><span class="p">[</span><span class="mi">2</span><span class="p">]]).</span><span class="nx">fadeIn</span><span class="p">();</span>
+</span><span class='line'>                        <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#4&#39;</span><span class="p">).</span><span class="nx">css</span><span class="p">(</span><span class="s2">&quot;background-color&quot;</span><span class="p">,</span> <span class="nx">warna</span><span class="p">[</span><span class="nx">nol</span><span class="p">]).</span><span class="nx">fadeIn</span><span class="p">();</span>
+</span><span class='line'>                    <span class="p">}</span>
+</span><span class='line'>                    <span class="c1">//alert(len - gel);</span>
+</span><span class='line'>                <span class="p">}</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>            <span class="nx">$</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>                <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#input&#39;</span><span class="p">).</span><span class="nx">focus</span><span class="p">();</span>
+</span><span class='line'>                <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#input&#39;</span><span class="p">).</span><span class="nx">keydown</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>                    <span class="k">if</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">keyCode</span> <span class="o">==</span> <span class="mi">8</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                        <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+</span><span class='line'>                    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">keyCode</span> <span class="o">==</span> <span class="mi">13</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                        <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#submit&#39;</span><span class="p">).</span><span class="nx">click</span><span class="p">();</span>
+</span><span class='line'>                        <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+</span><span class='line'>                    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">keyCode</span> <span class="o">&gt;=</span> <span class="mi">48</span> <span class="o">&amp;&amp;</span> <span class="nx">e</span><span class="p">.</span><span class="nx">keyCode</span> <span class="o">&lt;=</span> <span class="mi">57</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                        <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+</span><span class='line'>                    <span class="p">}</span>
+</span><span class='line'>                    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+</span><span class='line'>                <span class="p">});</span>
+</span><span class='line'>                <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#jml&#39;</span><span class="p">).</span><span class="nx">change</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>                    <span class="k">if</span><span class="p">(</span><span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                        <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#4&#39;</span><span class="p">).</span><span class="nx">hide</span><span class="p">();</span>
+</span><span class='line'>                    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>                        <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#4&#39;</span><span class="p">).</span><span class="nx">show</span><span class="p">();</span>
+</span><span class='line'>                    <span class="p">}</span>
+</span><span class='line'>                    <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#submit&#39;</span><span class="p">).</span><span class="nx">click</span><span class="p">();</span>
+</span><span class='line'>                <span class="p">}).</span><span class="nx">change</span><span class="p">();</span>
+</span><span class='line'>                <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#toleransi&#39;</span><span class="p">).</span><span class="nx">change</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>                    <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#submit&#39;</span><span class="p">).</span><span class="nx">click</span><span class="p">();</span>
+</span><span class='line'>                <span class="p">}).</span><span class="nx">change</span><span class="p">();</span>
+</span><span class='line'>                <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#submit&#39;</span><span class="p">).</span><span class="nx">click</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>                    <span class="nx">check</span><span class="p">(</span><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#input&#39;</span><span class="p">).</span><span class="nx">val</span><span class="p">());</span>
+</span><span class='line'>                    <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#5&#39;</span><span class="p">).</span><span class="nx">css</span><span class="p">(</span><span class="s2">&quot;background-color&quot;</span><span class="p">,</span> <span class="nx">warna</span><span class="p">[</span><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#toleransi&#39;</span><span class="p">).</span><span class="nx">val</span><span class="p">()]).</span><span class="nx">fadeIn</span><span class="p">();</span>
+</span><span class='line'>                <span class="p">});</span>
+</span><span class='line'>            <span class="p">});</span>
+</span><span class='line'>        <span class="nt">&lt;/script&gt;</span>
+</span><span class='line'><span class="nt">&lt;div</span> <span class="na">style=</span><span class="s">&quot;text-align:center;width:100%;height:100px;&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'><span class="nt">&lt;/div&gt;</span>
+</span><span class='line'><span class="nt">&lt;div</span> <span class="na">style=</span><span class="s">&quot;text-align:center;width:100%;&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'> <span class="nt">&lt;div&gt;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nt">&lt;label&gt;</span>
+</span><span class='line'> Nilai Hambatan : <span class="ni">&amp;nbsp;</span>
+</span><span class='line'> <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span> <span class="na">size=</span><span class="s">&quot;10&quot;</span> <span class="na">id=</span><span class="s">&quot;input&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'> <span class="ni">&amp;nbsp;</span> Ω
+</span><span class='line'> <span class="nt">&lt;/label&gt;</span>
+</span><span class='line'> <span class="nt">&lt;/div&gt;</span>
+</span><span class='line'> <span class="nt">&lt;div</span> <span class="na">style=</span><span class="s">&quot;margin:20px;&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nt">&lt;label&gt;</span>
+</span><span class='line'> Toleransi : <span class="ni">&amp;nbsp;</span>
+</span><span class='line'> <span class="nt">&lt;select</span> <span class="na">id=</span><span class="s">&quot;toleransi&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'> <span class="nt">&lt;option</span> <span class="na">value=</span><span class="s">&quot;1&quot;</span><span class="nt">&gt;</span>1%<span class="nt">&lt;/option&gt;</span>
+</span><span class='line'> <span class="nt">&lt;option</span> <span class="na">value=</span><span class="s">&quot;10&quot;</span><span class="nt">&gt;</span>5%<span class="nt">&lt;/option&gt;</span>
+</span><span class='line'> <span class="nt">&lt;option</span> <span class="na">value=</span><span class="s">&quot;11&quot;</span><span class="nt">&gt;</span>10%<span class="nt">&lt;/option&gt;</span>
+</span><span class='line'> <span class="nt">&lt;option</span> <span class="na">value=</span><span class="s">&quot;9&quot;</span><span class="nt">&gt;</span>20%<span class="nt">&lt;/option&gt;</span>
+</span><span class='line'> <span class="nt">&lt;/select&gt;</span>
+</span><span class='line'> <span class="ni">&amp;nbsp;</span>
+</span><span class='line'> <span class="nt">&lt;/label&gt;</span>
+</span><span class='line'> <span class="nt">&lt;/div&gt;</span>
+</span><span class='line'> <span class="nt">&lt;div</span> <span class="na">style=</span><span class="s">&quot;margin:20px;&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nt">&lt;label&gt;</span>
+</span><span class='line'> Jumlah Gelang Utama : <span class="ni">&amp;nbsp;</span>
+</span><span class='line'> <span class="nt">&lt;select</span> <span class="na">id=</span><span class="s">&quot;jml&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'> <span class="nt">&lt;option</span> <span class="na">value=</span><span class="s">&quot;2&quot;</span><span class="nt">&gt;</span>3<span class="nt">&lt;/option&gt;</span>
+</span><span class='line'> <span class="nt">&lt;option</span> <span class="na">value=</span><span class="s">&quot;3&quot;</span><span class="nt">&gt;</span>4<span class="nt">&lt;/option&gt;</span>
+</span><span class='line'> <span class="nt">&lt;/select&gt;</span>
+</span><span class='line'> <span class="nt">&lt;/label&gt;</span>
+</span><span class='line'> <span class="nt">&lt;/div&gt;</span>
+</span><span class='line'> <span class="nt">&lt;div</span> <span class="na">style=</span><span class="s">&quot;margin:20px;text-align:center;&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nt">&lt;button</span> <span class="na">id=</span><span class="s">&quot;submit&quot;</span><span class="nt">&gt;</span>Submit<span class="nt">&lt;/button&gt;</span>
+</span><span class='line'> <span class="nt">&lt;/div&gt;</span>
+</span><span class='line'><span class="nt">&lt;/div&gt;</span>
+</span><span class='line'><span class="nt">&lt;table</span> <span class="na">align=</span><span class="s">&quot;center&quot;</span> <span class="na">id=</span><span class="s">&quot;tb&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'> <span class="nt">&lt;tbody&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;tr&gt;</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="nt">&lt;td&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;1&quot;</span> <span class="na">class=</span><span class="s">&quot;gelang&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;2&quot;</span> <span class="na">class=</span><span class="s">&quot;gelang&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;3&quot;</span> <span class="na">class=</span><span class="s">&quot;gelang&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;4&quot;</span> <span class="na">class=</span><span class="s">&quot;gelang&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;5&quot;</span> <span class="na">class=</span><span class="s">&quot;gelang&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+</span><span class='line'> <span class="nt">&lt;/td&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/tr&gt;</span>
+</span><span class='line'> <span class="nt">&lt;/tbody&gt;</span>
+</span><span class='line'><span class="nt">&lt;/table&gt;</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+
+
+  <span class="byline author vcard">Authored by <span class="fn">
+  
+    Dian Aditya
+  
+  </span></span>
+
+
+      
+
+
+
+
+
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://diian.org/blog/2010/04/11/konversi-nilai-resistor-dengan-jquery/" data-via="" data-counturl="http://diian.org/blog/2010/04/11/konversi-nilai-resistor-dengan-jquery/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+    <div class="fb-like" data-layout="button_count" data-send="false" data-width="300" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2010/01/03/struts-%2B-velocity-solusi-mudah-dan-ideal/" title="Previous Post: Struts + Velocity, Solusi Mudah dan Ideal">&laquo; Struts + Velocity, Solusi Mudah dan Ideal</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2010/05/20/swing-android%3F-gak-jauh-beda/" title="Next Post: Swing &amp; Android? Gak Jauh Beda">Swing &amp; Android? Gak Jauh Beda &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+
+
+  <section>
+    <h1>Comments</h1>
+    <div id="facebook_comments" aria-live="polite">
+      <noscript>Please enable JavaScript to view the comments powered by facebook</a></noscript>
+<div
+  class="fb-comments"
+  data-href="http://diian.org/blog/2010/04/11/konversi-nilai-resistor-dengan-jquery/"
+  data-num-posts="5"
+  data-width="100%"></div>
+    </div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Dian Aditya -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> | Themed with <a href="https://github.com/lucaslew/whitespace">Whitespace</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=279596272235062&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

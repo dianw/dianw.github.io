@@ -1,0 +1,253 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Pakai Application Server Yang Mana? (Ala Saya) - Dian Aditya</title>
+  <meta name="author" content="Dian Aditya">
+
+  
+  <meta name="description" content="Setelah sekian abad tidak melihat kalender, baru sadar ini umur ternyata dah nambah banyak. Eeeaaaa, tidak terasa sudah dua tahun lebih saya terlibat &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://diian.org/blog/2012/06/28/pakai-application-server-yang-mana%3F-%28ala-saya%29">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Dian Aditya" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet" type="text/css">
+<!--- MathJax Configuration -->
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+<meta property="fb:app_id" content="279596272235062" />
+
+  
+
+</head>
+
+<body   class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Dian Aditya</a></h1>
+  
+    <h2>Penjahit Digital.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+  
+  
+  
+  
+<ul class="subscription">
+  <li><a href="https://github.com/dianw" rel="subscribe-github" title="@dianw on GitHub">GitHub</a></li>
+</ul>
+  
+  
+  
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:diian.org" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      
+        <h1 class="entry-title">Pakai Application Server Yang Mana? (Ala Saya)</h1>
+      
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Setelah sekian abad tidak melihat kalender, baru sadar ini umur ternyata dah nambah banyak. Eeeaaaa, tidak terasa sudah dua tahun lebih saya terlibat dari satu projek ke projek, bergelantungan mondar-mandir. Yah tentunya sudah lumayan juga jumlah aplikasi yang telah terdeploy ke berbagai tempat dengan beragam jenis application server. Mulai dari aplikasi yang mengharuskan berjalan diatas JavaEE container hingga stack yang diluar standart JEE seperti Cimande dengan Struts2-Spring-Hibernate yang pastinya bisa jalan di application server manapun (dengan tambahan telaten dan istiqomah untuk beberapa spesifik application server).</p>
+
+<p>Yang akan saya bahas kali ini adalah beberapa pertimbangan (pribadi) tentang bagaimana memilih application server yang tepat untuk digunakan pada fase production. Sebagai permulaan ada 2 jenis kelompok besar dalam aplication server, kelompok pertama adalah full-blown Java EE container, sedangkan kelompompok ke-dua adalah servlet container. Kelompok pertama adalah dihuni oleh app server yang mendukung spesifikasi Java EE seperti EJB, JMS, JSF, dll, beberapa anggota kelompok ini adalah Glassfish, JBoss AS, Weblogic, Websphere, dan masih banyak lagi. Sedangkan kelompok ke-dua adalah app server yang tidak mendukung secara penuh spesifikasi JEE seperti Tomcat dan Jetty. Sudah dapat gambaran tentang dua kelompok besar tersebut? Oke, sekarang saya akan pilah-pilah sesuai dengan kemampuan masing-masih application server.</p>
+
+<h3>Mandat dari client</h3>
+
+<p>Yang satu ini tidak bisa di ganggu gugat, kebanyakan client memang sudah bekerja sama dengan vendor-vendor kesayangan mereka termasuk urusan application server. Jadi bila kondisi seperti ini terjadi maka aplikasi-lah yang akan saya jadikan prioritas utama agar kompatibel dengan spesifik application server. Application server dalam kasus ini biasanya didominasi oleh produk vendor propietary seperti WLS dan WAS.</p>
+
+<h3>Perlukah menggunakan teknologi Java EE?</h3>
+
+<p>Kalau boleh jujur saya punya pengalaman yang kurang baik dengan EJB (J2EE 1.4 waktu itu) yang diimplementasikan dalam aplikasi yang tidak terlalu besar (curhat). Ada yang bilang sih Java EE 6 sudah lebih baik. Pertimbangan selanjutnya adalah spesifikasi JEE yang lain seperti JMS, JSF, atau mungkin ESB, jika memang diperlukan saya akan mengutamakan app server opensource terlebih dahulu, dua favorit saya jatuh pada Glassfish dan JBossAS. Dua container tersebut memiliki komunitas yang cukup besar, tidak jarang saya menemukan penyelesaian suatu masalah cukup dengan mengetik keyword di google, bahkan tanpa perlu bertanya pada mailing list komunitasnya. Glassfish 3 sudah mendukung spesifikasi JEE 6, salah satu yang saya suka adalah fitur admin consolenya yang cukup lengkap, dan juga servlet engine-nya yang konon adalah fork dari Tomcat. JBossAS 7 cukup mengesankan dengan startup-nya yang sangat cepat termasuk admin consolenya yang sudah menggunakan ajax, walaupun menurut saya belum sekeren Glassfish punya. Dulu saya pernah berfikir setiap aplikasi yang bisa jalan di Tomcat pasti bisa di deploy di JEE container manapun, semuanya memang terbukti sebelum akhirnya saya bertemu dengan Weblogic, jadi mungkin tanpa alasan pertama saya sebisa mungkin akan menghindari app server yang satu ini.</p>
+
+<h3>Cukup dengan servlet container?</h3>
+
+<p>Saya jarang ambil pusing bila diharuskan mendeploy aplikasi dibawah platform Cimande ataupun Yama. Ya, pada kenyataannya kedua framework kebanggaan ini bisa berjalan diatas servlet container saja. Beberapa project yang saya kerjakan dideploy diatas Tomcat. Jetty? Jujur saja saya belum pernah mencoba Jetty untuk kebutuhan production, namun untuk kebutuhan servlet container saya rasa Tomcat ataupun Jetty, tidak ada pilihan yang salah diantara kedua produk tersebut.</p>
+
+<h3>Kebutuhan hit tinggi tanpa perlu banyak setting</h3>
+
+<p>Kalau yang satu ini saya belajar banyak dari roller, yap tempat saya posting blog ini yang hampir setahun lalu bermigrasi dengan mulus dari Tomcat6 ke Glassfish3. Setelah migrasi ke Glassfish beberapa problem seperti timeout yang rutin setiap kali terjadi hit tinggi berangsur menghilang. Apakah artinya Tomcat tidak lebih tangguh Glassfish? Tentunya tidak pula, tetapi untuk konfigurasi minim (walaupun naif jika harus membandingkan keduanya) saya lebih memilih aman dengan menggunakan Glassfish.</p>
+
+<p>Seluruh isi dari artikel ini merupakan opini subjektif berdasarkan pengalaman saya, apapun keputusan untuk menggunakan application server manapun dengan suatu alasan tertentu adalah menjadi hak masing-masih individu.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+
+
+  <span class="byline author vcard">Authored by <span class="fn">
+  
+    Dian Aditya
+  
+  </span></span>
+
+
+      
+
+
+
+
+
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://diian.org/blog/2012/06/28/pakai-application-server-yang-mana%3F-%28ala-saya%29/" data-via="" data-counturl="http://diian.org/blog/2012/06/28/pakai-application-server-yang-mana%3F-%28ala-saya%29/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+    <div class="fb-like" data-layout="button_count" data-send="false" data-width="300" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/06/12/mengimplementasikan-clean-url-parameter-dengan-inca-s2rest-plugin/" title="Previous Post: Mengimplementasikan Clean URL Parameter dengan Inca S2Rest Plugin">&laquo; Mengimplementasikan Clean URL Parameter dengan Inca S2Rest Plugin</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2012/07/27/menggunakan-method-post-get-put-delete-pada-html-form-tag-bisakah%3F/" title="Next Post: Menggunakan method POST, GET, PUT, DELETE pada HTML form tag, bisakah?">Menggunakan method POST, GET, PUT, DELETE pada HTML form tag, bisakah? &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+
+
+  <section>
+    <h1>Comments</h1>
+    <div id="facebook_comments" aria-live="polite">
+      <noscript>Please enable JavaScript to view the comments powered by facebook</a></noscript>
+<div
+  class="fb-comments"
+  data-href="http://diian.org/blog/2012/06/28/pakai-application-server-yang-mana%3F-%28ala-saya%29/"
+  data-num-posts="5"
+  data-width="100%"></div>
+    </div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Dian Aditya -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> | Themed with <a href="https://github.com/lucaslew/whitespace">Whitespace</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=279596272235062&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

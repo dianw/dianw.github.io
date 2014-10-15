@@ -1,0 +1,439 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>GIS Part 2 - Pencarian Informasi Spasial Menggunakan Hibernate Search/Lucene - Dian Aditya</title>
+  <meta name="author" content="Dian Aditya">
+
+  
+  <meta name="description" content="Berikut ini adalah posting saya yang kedua mengenai GIS, karena topik ini dibagi menjadi 4 bagian, saya sangat menyarankan anda untuk membaca secara &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://diian.org/blog/2012/12/19/gis-part-2-pencarian-informasi-spasial-menggunakan-hibernate-search-lucene">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Dian Aditya" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet" type="text/css">
+<!--- MathJax Configuration -->
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+<meta property="fb:app_id" content="279596272235062" />
+
+  
+
+</head>
+
+<body   class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Dian Aditya</a></h1>
+  
+    <h2>Penjahit Digital.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+  
+  
+  
+  
+<ul class="subscription">
+  <li><a href="https://github.com/dianw" rel="subscribe-github" title="@dianw on GitHub">GitHub</a></li>
+</ul>
+  
+  
+  
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:diian.org" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      
+        <h1 class="entry-title">GIS Part 2 - Pencarian Informasi Spasial Menggunakan Hibernate Search/Lucene</h1>
+      
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Berikut ini adalah posting saya yang kedua mengenai GIS, karena topik ini dibagi menjadi 4 bagian, saya sangat menyarankan anda untuk membaca secara berurutan.</p>
+
+<ul>
+ <li><a href="http://blogs.mervpolis.com/roller/dwx/entry/gis_part_1_mengkonsumsi_data" target="_blank">Part 1 - Mengkonsumsi Data Tiles dengan Leaflet</a></li>
+ <li><a href="http://blogs.mervpolis.com/roller/dwx/entry/gis_part_2_pencarian_informasi" target="_blank">Part 2 - Pencarian Informasi Spasial menggunakan Hibernate Search/Lucene</a></li>
+ <li>Part 3 - Membuat REST API dengan S2Rest Plugin</li>
+ <li>Part 4 - Mengkonsumsi Informasi Spatial dengan Leaflet dan JQuery</li>
+</ul>
+
+
+<h2>Pencarian Informasi Spasial menggunakan Hibernate Search/Lucene</h2>
+
+<p>Pernah pakai aplikasi yang berhubungan dengan point of interest seperti foursquare atau google latitude? Ya dua aplikasi yang saya sebutkan tersebut adalah contoh implementasi dari sebuah service yang sangat berkaitan erat dengan lokasi dan koordinat. Ketika kita membuka aplikasi, melalui browser atau perangkat mobile misalnya, aplikasi akan secara otomatis membaca koordinat dimana perangkat berada melalui GPS (dengan seizin pemilik perangkat tentunya) dan kemudian menamplikan lokasi-lokasi terdekat dengan radius tertentu dari lokasi user berada.</p>
+
+<p>Pada bagian ini saya akan membahas bagaimana implementasi pengolahan data spatial menggunakan Hibernate Search.Hibernate Search adalah salah satu komponen Hibernate yang mengintegrasikan kemampuan search engine dari Apache Lucence kedalam Hiberante dan JPA model. Apache Lucene adalah pustaka yang sangat powerful untuk melakukan pencarian teks bebas secara efisien, disamping itu Lucene juga mendukung spatial search yang akan saya bahas kali ini. Hibernate Search mulai mendukung spatial search sejak versi 4.2.0.Beta1, versi terupdate ketika tulisan ini dibuat adalah 4.2.0.Beta2.</p>
+
+<p>Karena masih dalam versi beta, beberapa fitur masih belum dapat digunakan dengan sempurna, salah satunya adalah error untuk query sort berdasarkan jarak terdekat.</p>
+
+<p>Dalam kasus kali ini saya akan menggunakan fitur spatial search untuk menampilkan objek terdekat dari suatu koordinat dalam radius tertentu (lihat ilustrasi dibawah ini). Kumpulan objek dan koordinat disimpan dalam database. Koordinat berbasis latitude (garis lintang) dan longitude (garis bujur).</p>
+
+<p><img src="https://lh4.googleusercontent.com/-b_S9JbJhybw/UNEtqpncnMI/AAAAAAAAADY/oa6tkD_FLDc/s800/map_3km_radius.png" title="Monas, Radius 3 KM" alt=""></p>
+
+<p>Pada ilustrasi diatas titik tengah berada pada monumen nasional, lingkaran berwarna abu-abu adalah daerah dalam radius 3 KM dari titik tengah. Titik biru yang berada di dalam lingkaran adalah daerah yang terseleksi. Sedangkan titik diluarnya adalah sebaliknya.</p>
+
+<h3>Kode</h3>
+
+<p>Untuk permulaan mari membuat desain table sederhana, karena Hibernate berbasis Object Relational Mapping (ORM) untuk contoh ini saya akan membuat sebuah JPA entity untuk mewakilkan table.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nd">@Entity</span>
+</span><span class='line'><span class="nd">@Table</span>
+</span><span class='line'><span class="nd">@Indexed</span>
+</span><span class='line'><span class="nd">@Spatial</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&quot;location&quot;</span><span class="o">)</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Location</span> <span class="kd">implements</span> <span class="n">Coordinates</span><span class="o">,</span> <span class="n">Serializable</span> <span class="o">{</span>
+</span><span class='line'> <span class="kd">private</span> <span class="kt">long</span> <span class="n">id</span><span class="o">;</span>
+</span><span class='line'> <span class="kd">private</span> <span class="n">String</span> <span class="n">name</span><span class="o">;</span>
+</span><span class='line'> <span class="kd">private</span> <span class="n">Double</span> <span class="n">latitude</span><span class="o">;</span>
+</span><span class='line'> <span class="kd">private</span> <span class="n">Double</span> <span class="n">longitude</span><span class="o">;</span>
+</span><span class='line'> <span class="o">...</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Anotasi <code>@Indexed</code> mengindikasikan bahwa class tersebut akan diindex oleh Lucene. Anotasi <code>@Spatial</code> wajib agar data dapat diquery, entity juga diharuskan untuk mengimplementasikan interface <code>org.hibernate.search.spatial.Coordinates</code>.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Coordinates</span> <span class="o">{</span>
+</span><span class='line'> <span class="n">Double</span> <span class="nf">getLatitude</span><span class="o">();</span>
+</span><span class='line'> <span class="n">Double</span> <span class="nf">getLongitude</span><span class="o">();</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Selanjutnya mari membuat data awal.</p>
+
+<table class="table table-bordered table-condensed table-striped">
+ <thead>
+  <tr>
+   <th>ID</th>
+   <th>NAME</th>
+   <th>LATITUDE</th>
+   <th>LONGITUDE</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>1</td>
+   <td>Krukut</td>
+   <td>-6.1583</td>
+   <td>106.81458</td>
+  </tr>
+  <tr>
+   <td>2</td>
+   <td>Kampung Bali</td>
+   <td>-6.18476</td>
+   <td>106.8187</td>
+  </tr>
+  <tr>
+   <td>3</td>
+   <td>Kebon Sirih</td>
+   <td>-6.18595</td>
+   <td>106.83517</td>
+  </tr>
+  <tr>
+   <td>4</td>
+   <td>Senen</td>
+   <td>-6.17657</td>
+   <td>106.84376</td>
+  </tr>
+  <tr>
+   <td>5</td>
+   <td>Gondangdia</td>
+   <td>-6.19449</td>
+   <td>106.83105</td>
+  </tr>
+  <tr>
+   <td>6</td>
+   <td>Kemayoran</td>
+   <td>-6.16684</td>
+   <td>106.84874</td>
+  </tr>
+  <tr>
+   <td>7</td>
+   <td>Cikini</td>
+   <td>-6.19397</td>
+   <td>106.84221</td>
+  </tr>
+  <tr>
+   <td>8</td>
+   <td>Gunung Sahari</td>
+   <td>-6.16086</td>
+   <td>106.84462</td>
+  </tr>
+  <tr>
+   <td>9</td>
+   <td>Cideng</td>
+   <td>-6.17554</td>
+   <td>106.80891</td>
+  </tr>
+  <tr>
+   <td>10</td>
+   <td>Jati Pulo</td>
+   <td>-6.18186</td>
+   <td>106.80307</td>
+  </tr>
+  <tr>
+   <td>11</td>
+   <td>Tomang</td>
+   <td>-6.17307</td>
+   <td>106.79646</td>
+  </tr>
+  <tr>
+   <td>12</td>
+   <td>Glodok</td>
+   <td>-6.14738</td>
+   <td>106.81303</td>
+  </tr>
+  <tr>
+   <td>13</td>
+   <td>Cempaka Baru</td>
+   <td>-6.17059</td>
+   <td>106.86522</td>
+  </tr>
+ </tbody>
+</table>
+
+
+<p>Langkah terakhir adalah membuat query untuk menampilkan lokasi dalam radius 3 KM dari titik tengah.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="cm">/**</span>
+</span><span class='line'><span class="cm"> *</span>
+</span><span class='line'><span class="cm"> * @param radius</span>
+</span><span class='line'><span class="cm"> * Radius dalam Kilometer</span>
+</span><span class='line'><span class="cm"> * @param lat</span>
+</span><span class='line'><span class="cm"> * Latitude</span>
+</span><span class='line'><span class="cm"> * @param lng</span>
+</span><span class='line'><span class="cm"> * Longitude</span>
+</span><span class='line'><span class="cm"> * @return List Location dalam radius dari titik tengah (lat, lng)</span>
+</span><span class='line'><span class="cm"> */</span>
+</span><span class='line'><span class="kd">public</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">location</span><span class="o">&gt;</span> <span class="nf">getLocations</span><span class="o">(</span><span class="kt">int</span> <span class="n">radius</span><span class="o">,</span> <span class="kt">double</span> <span class="n">lat</span><span class="o">,</span> <span class="kt">double</span> <span class="n">lng</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'> <span class="n">FullTextEntityManager</span> <span class="n">em</span> <span class="o">=</span> <span class="n">Search</span><span class="o">.</span><span class="na">getFullTextEntityManager</span><span class="o">(</span><span class="n">entityManager</span><span class="o">);</span>
+</span><span class='line'> <span class="n">QueryBuilder</span> <span class="n">builder</span> <span class="o">=</span> <span class="n">em</span><span class="o">.</span><span class="na">getSearchFactory</span><span class="o">().</span><span class="na">buildQueryBuilder</span><span class="o">().</span><span class="na">forEntity</span><span class="o">(</span><span class="n">Location</span><span class="o">.</span><span class="na">class</span><span class="o">).</span><span class="na">get</span><span class="o">();</span>
+</span><span class='line'> <span class="n">Query</span> <span class="n">query</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="na">spatial</span><span class="o">().</span><span class="na">onCoordinates</span><span class="o">(</span><span class="s">&quot;location&quot;</span><span class="o">).</span><span class="na">within</span><span class="o">(</span><span class="n">radius</span><span class="o">,</span> <span class="n">Unit</span><span class="o">.</span><span class="na">KM</span><span class="o">).</span><span class="na">ofLatitude</span><span class="o">(</span><span class="n">lat</span><span class="o">).</span><span class="na">andLongitude</span><span class="o">(</span><span class="n">lng</span><span class="o">).</span><span class="na">createQuery</span><span class="o">();</span>
+</span><span class='line'> <span class="n">FullTextQuery</span> <span class="n">q</span> <span class="o">=</span> <span class="n">em</span><span class="o">.</span><span class="na">createFullTextQuery</span><span class="o">(</span><span class="n">query</span><span class="o">,</span> <span class="n">Location</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'> <span class="k">return</span> <span class="n">q</span><span class="o">.</span><span class="na">getResultList</span><span class="o">();</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p></location>
+Method diatas akan mencari instance (Location) yang berada di dalam radius dari latitude dan longitude yang telah dimasukkan.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+
+
+  <span class="byline author vcard">Authored by <span class="fn">
+  
+    Dian Aditya
+  
+  </span></span>
+
+
+      
+
+
+
+
+
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://diian.org/blog/2012/12/19/gis-part-2-pencarian-informasi-spasial-menggunakan-hibernate-search-lucene/" data-via="" data-counturl="http://diian.org/blog/2012/12/19/gis-part-2-pencarian-informasi-spasial-menggunakan-hibernate-search-lucene/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+    <div class="fb-like" data-layout="button_count" data-send="false" data-width="300" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/10/14/gis-part-1-mengkonsumsi-data-tiles-dengan-leaflet/" title="Previous Post: GIS Part 1 - Mengkonsumsi Data Tiles dengan Leaflet">&laquo; GIS Part 1 - Mengkonsumsi Data Tiles dengan Leaflet</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+
+
+  <section>
+    <h1>Comments</h1>
+    <div id="facebook_comments" aria-live="polite">
+      <noscript>Please enable JavaScript to view the comments powered by facebook</a></noscript>
+<div
+  class="fb-comments"
+  data-href="http://diian.org/blog/2012/12/19/gis-part-2-pencarian-informasi-spasial-menggunakan-hibernate-search-lucene/"
+  data-num-posts="5"
+  data-width="100%"></div>
+    </div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Dian Aditya -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> | Themed with <a href="https://github.com/lucaslew/whitespace">Whitespace</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=279596272235062&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

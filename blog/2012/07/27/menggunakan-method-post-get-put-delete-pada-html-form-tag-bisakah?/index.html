@@ -1,0 +1,375 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Menggunakan Method POST, GET, PUT, DELETE Pada HTML Form Tag, Bisakah? - Dian Aditya</title>
+  <meta name="author" content="Dian Aditya">
+
+  
+  <meta name="description" content="Pernahkah anda menggunakan menggunakan http method selain GET dan POST pada browser. Yah, tentunya hanya hanya client seperti apache http client yang &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://diian.org/blog/2012/07/27/menggunakan-method-post-get-put-delete-pada-html-form-tag-bisakah%3F">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Dian Aditya" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet" type="text/css">
+<!--- MathJax Configuration -->
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+<meta property="fb:app_id" content="279596272235062" />
+
+  
+
+</head>
+
+<body   class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Dian Aditya</a></h1>
+  
+    <h2>Penjahit Digital.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+  
+  
+  
+  
+<ul class="subscription">
+  <li><a href="https://github.com/dianw" rel="subscribe-github" title="@dianw on GitHub">GitHub</a></li>
+</ul>
+  
+  
+  
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:diian.org" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      
+        <h1 class="entry-title">Menggunakan Method POST, GET, PUT, DELETE Pada HTML Form Tag, Bisakah?</h1>
+      
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Pernahkah anda menggunakan menggunakan http method selain <code>GET</code> dan <code>POST</code> pada browser. Yah, tentunya hanya hanya client seperti apache http client yang mensupport http request method seperti <code>PUT</code>, <code>DELETE</code>, ataupun <code>OPTION</code>. Sebenarnya saat ini hampir seluruh browser sudah dapat mengirimkan request dengan menggunakan http method tersebut melalui <code>XMLHttpRequest</code>, yap kuncinya ada di AJAX. Lalu bagaimana dengan html form tag?</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'> <span class="nt">&lt;form</span> <span class="na">method=</span><span class="s">&quot;PUT&quot;</span><span class="nt">&gt;&lt;/form&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Sayangnya semua browser hanya mendukung <code>POST</code> dan <code>GET</code> untuk request pada form tag, jadi ilustrasi yang saya tulis diatas tidak dapat diimplementasikan. Lalu? Tunggu dulu, buat anda yang sudah main-main dengan Yama, semuanya bisa jadi mungkin. Saya akan memberikan sedikit contoh bagaimana method selain <code>POST</code> dan <code>GET</code> bisa dikirimkan ke server melalui browser, menggunakan form tag tentunya.</p>
+
+<p>Sebagai pemanasan saya mulai dengan membuat sebuah proyek Yama.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>mvn archetype:generate \
+</span><span class='line'> -DarchetypeGroupId=org.meruvian.yama \
+</span><span class='line'>-DarchetypeArtifactId=yama-struts-archetype \
+</span><span class='line'>-DarchetypeVersion=1.0.2 \
+</span><span class='line'>-DgroupId=com.example.yama \
+</span><span class='line'>-DartifactId=my-first-yama</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Oke kemudian saya akan membuat dua buah file jsp dibawah <code>/src/main/webapp/WEB-INF/test</code>, satu untuk mengirim request dan yang satunya lagi untuk menerima hasil request.</p>
+
+<h3>index.jsp</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;form</span> <span class="na">method=</span><span class="s">&quot;delete&quot;</span> <span class="na">action=</span><span class="s">&quot;/test&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'> <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;submit&quot;</span> <span class="na">value=</span><span class="s">&quot;Test http method!&quot;</span> <span class="na">class=</span><span class="s">&quot;btn&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'><span class="nt">&lt;/form&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>success.jsp</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'>Http method : <span class="err">&lt;</span>%= request.getMethod() %&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Kemudian saya buat action class.
+ </div></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kn">package</span> <span class="n">com</span><span class="o">.</span><span class="na">example</span><span class="o">.</span><span class="na">yama</span><span class="o">.</span><span class="na">action</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.commons.logging.Log</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.commons.logging.LogFactory</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.meruvian.inca.struts2.rest.ActionResult</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.meruvian.inca.struts2.rest.annotation.Action</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.meruvian.inca.struts2.rest.annotation.Action.HttpMethod</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nd">@Action</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&quot;/&quot;</span><span class="o">)</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TestAction</span> <span class="o">{</span>
+</span><span class='line'><span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Log</span> <span class="n">LOG</span> <span class="o">=</span> <span class="n">LogFactory</span><span class="o">.</span><span class="na">getLog</span><span class="o">(</span><span class="n">TestAction</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nd">@Action</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&quot;/test&quot;</span><span class="o">,</span> <span class="n">method</span> <span class="o">=</span> <span class="n">HttpMethod</span><span class="o">.</span><span class="na">GET</span><span class="o">)</span>
+</span><span class='line'>  <span class="kd">public</span> <span class="n">ActionResult</span> <span class="nf">index</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">new</span> <span class="nf">ActionResult</span><span class="o">(</span><span class="s">&quot;/WEB-INF/test/index.jsp&quot;</span><span class="o">);</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nd">@Action</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&quot;/test&quot;</span><span class="o">,</span> <span class="n">method</span> <span class="o">=</span> <span class="n">HttpMethod</span><span class="o">.</span><span class="na">DELETE</span><span class="o">)</span>
+</span><span class='line'>  <span class="kd">public</span> <span class="n">ActionResult</span> <span class="nf">delete</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>    <span class="n">LOG</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&quot;Method delete executed!&quot;</span><span class="o">);</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">new</span> <span class="nf">ActionResult</span><span class="o">(</span><span class="s">&quot;/WEB-INF/test/success.jsp&quot;</span><span class="o">);</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Dan yang terakhir saya tambahkan link menu dengan mengedit file <code>menu.ftl</code> pada <code>/src/main/webapp/view</code></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;active&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;&lt;@s.url value=&amp;quot;/home&amp;quot; /&gt;&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;i</span> <span class="na">class=</span><span class="s">&quot;icon-home icon-white&quot;</span><span class="nt">&gt;&lt;/i&gt;</span> Home
+</span><span class='line'>  <span class="nt">&lt;/a&gt;</span>
+</span><span class='line'><span class="nt">&lt;/li&gt;</span>
+</span><span class='line'><span class="err">&lt;</span>#if request.session.getAttribute(&quot;SPRING_SECURITY_CONTEXT&quot;)??&gt;
+</span><span class='line'><span class="c">&lt;!-- Menu yang harus ditambahkan --&gt;</span>
+</span><span class='line'><span class="nt">&lt;li&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;#/test&quot;</span><span class="nt">&gt;</span>Test HTTP Method<span class="nt">&lt;/a&gt;</span>
+</span><span class='line'><span class="nt">&lt;/li&gt;</span>
+</span><span class='line'><span class="c">&lt;!-- End of menu yang harus ditambahkan --&gt;</span>
+</span><span class='line'><span class="nt">&lt;li&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;&lt;@s.url value=&quot;</span><span class="err">logout&quot;</span> <span class="nt">/&gt;</span>&quot;&gt;<span class="nt">&lt;/a&gt;</span>
+</span><span class='line'>  <span class="err">&lt;</span>@s.text name=&quot;frontent.logout.text&quot; /&gt;
+</span><span class='line'><span class="nt">&lt;/li&gt;</span>
+</span><span class='line'><span class="c">&lt;!--#if--&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Selanjutnya saya akan coba jalankan menggunakan jetty. <code>mvn jetty:run</code></p>
+
+<h3>Request:</h3>
+
+<p><img src="https://lh4.googleusercontent.com/-oUWCUUnNXEA/UBF9YoJg8XI/AAAAAAAAAZw/SVE1iKAX6DI/s800/2.png" alt="Request" /></p>
+
+<h3>Response:</h3>
+
+<p><img src="https://lh4.googleusercontent.com/-iVZgri-Fae8/UBF9YnV0ZhI/AAAAAAAAAZ0/qauYyl7HH2U/s800/1.png" alt="Response" /></p>
+
+<p>Secara teknis Yama menghandle setiap request pada tag form, kemudian mengkonversinya menjadi AJAX request. Jadi kita tidak perlu lagi membuat kode javascript untuk mengirimkan AJAX request.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+
+
+  <span class="byline author vcard">Authored by <span class="fn">
+  
+    Dian Aditya
+  
+  </span></span>
+
+
+      
+
+
+
+
+
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://diian.org/blog/2012/07/27/menggunakan-method-post-get-put-delete-pada-html-form-tag-bisakah%3F/" data-via="" data-counturl="http://diian.org/blog/2012/07/27/menggunakan-method-post-get-put-delete-pada-html-form-tag-bisakah%3F/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+    <div class="fb-like" data-layout="button_count" data-send="false" data-width="300" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/06/28/pakai-application-server-yang-mana%3F-%28ala-saya%29/" title="Previous Post: Pakai Application Server yang Mana? (Ala Saya)">&laquo; Pakai Application Server yang Mana? (Ala Saya)</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2012/10/14/gis-part-1-mengkonsumsi-data-tiles-dengan-leaflet/" title="Next Post: GIS Part 1 - Mengkonsumsi Data Tiles dengan Leaflet">GIS Part 1 - Mengkonsumsi Data Tiles dengan Leaflet &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+
+
+  <section>
+    <h1>Comments</h1>
+    <div id="facebook_comments" aria-live="polite">
+      <noscript>Please enable JavaScript to view the comments powered by facebook</a></noscript>
+<div
+  class="fb-comments"
+  data-href="http://diian.org/blog/2012/07/27/menggunakan-method-post-get-put-delete-pada-html-form-tag-bisakah%3F/"
+  data-num-posts="5"
+  data-width="100%"></div>
+    </div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Dian Aditya -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> | Themed with <a href="https://github.com/lucaslew/whitespace">Whitespace</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=279596272235062&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

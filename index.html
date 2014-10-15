@@ -1,1 +1,1695 @@
-My Octopress Page is coming soon &hellip;
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Dian Aditya</title>
+  <meta name="author" content="Dian Aditya">
+
+  
+  <meta name="description" content="Berikut ini adalah posting saya yang kedua mengenai GIS, karena topik ini dibagi menjadi 4 bagian, saya sangat menyarankan anda untuk membaca secara &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://diian.org">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Dian Aditya" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet" type="text/css">
+<!--- MathJax Configuration -->
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+<meta property="fb:app_id" content="279596272235062" />
+
+  
+
+</head>
+
+<body   class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Dian Aditya</a></h1>
+  
+    <h2>Penjahit Digital.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+  
+  
+  
+  
+<ul class="subscription">
+  <li><a href="https://github.com/dianw" rel="subscribe-github" title="@dianw on GitHub">GitHub</a></li>
+</ul>
+  
+  
+  
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:diian.org" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/12/19/gis-part-2-pencarian-informasi-spasial-menggunakan-hibernate-search-lucene/">GIS Part 2 - Pencarian Informasi Spasial Menggunakan Hibernate Search/Lucene</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Berikut ini adalah posting saya yang kedua mengenai GIS, karena topik ini dibagi menjadi 4 bagian, saya sangat menyarankan anda untuk membaca secara berurutan.</p>
+
+<ul>
+ <li><a href="http://blogs.mervpolis.com/roller/dwx/entry/gis_part_1_mengkonsumsi_data" target="_blank">Part 1 - Mengkonsumsi Data Tiles dengan Leaflet</a></li>
+ <li><a href="http://blogs.mervpolis.com/roller/dwx/entry/gis_part_2_pencarian_informasi" target="_blank">Part 2 - Pencarian Informasi Spasial menggunakan Hibernate Search/Lucene</a></li>
+ <li>Part 3 - Membuat REST API dengan S2Rest Plugin</li>
+ <li>Part 4 - Mengkonsumsi Informasi Spatial dengan Leaflet dan JQuery</li>
+</ul>
+
+
+<h2>Pencarian Informasi Spasial menggunakan Hibernate Search/Lucene</h2>
+
+<p>Pernah pakai aplikasi yang berhubungan dengan point of interest seperti foursquare atau google latitude? Ya dua aplikasi yang saya sebutkan tersebut adalah contoh implementasi dari sebuah service yang sangat berkaitan erat dengan lokasi dan koordinat. Ketika kita membuka aplikasi, melalui browser atau perangkat mobile misalnya, aplikasi akan secara otomatis membaca koordinat dimana perangkat berada melalui GPS (dengan seizin pemilik perangkat tentunya) dan kemudian menamplikan lokasi-lokasi terdekat dengan radius tertentu dari lokasi user berada.</p>
+
+<p>Pada bagian ini saya akan membahas bagaimana implementasi pengolahan data spatial menggunakan Hibernate Search.Hibernate Search adalah salah satu komponen Hibernate yang mengintegrasikan kemampuan search engine dari Apache Lucence kedalam Hiberante dan JPA model. Apache Lucene adalah pustaka yang sangat powerful untuk melakukan pencarian teks bebas secara efisien, disamping itu Lucene juga mendukung spatial search yang akan saya bahas kali ini. Hibernate Search mulai mendukung spatial search sejak versi 4.2.0.Beta1, versi terupdate ketika tulisan ini dibuat adalah 4.2.0.Beta2.</p>
+
+<p>Karena masih dalam versi beta, beberapa fitur masih belum dapat digunakan dengan sempurna, salah satunya adalah error untuk query sort berdasarkan jarak terdekat.</p>
+
+<p>Dalam kasus kali ini saya akan menggunakan fitur spatial search untuk menampilkan objek terdekat dari suatu koordinat dalam radius tertentu (lihat ilustrasi dibawah ini). Kumpulan objek dan koordinat disimpan dalam database. Koordinat berbasis latitude (garis lintang) dan longitude (garis bujur).</p>
+
+<p><img src="https://lh4.googleusercontent.com/-b_S9JbJhybw/UNEtqpncnMI/AAAAAAAAADY/oa6tkD_FLDc/s800/map_3km_radius.png" title="Monas, Radius 3 KM" alt=""></p>
+
+<p>Pada ilustrasi diatas titik tengah berada pada monumen nasional, lingkaran berwarna abu-abu adalah daerah dalam radius 3 KM dari titik tengah. Titik biru yang berada di dalam lingkaran adalah daerah yang terseleksi. Sedangkan titik diluarnya adalah sebaliknya.</p>
+
+<h3>Kode</h3>
+
+<p>Untuk permulaan mari membuat desain table sederhana, karena Hibernate berbasis Object Relational Mapping (ORM) untuk contoh ini saya akan membuat sebuah JPA entity untuk mewakilkan table.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nd">@Entity</span>
+</span><span class='line'><span class="nd">@Table</span>
+</span><span class='line'><span class="nd">@Indexed</span>
+</span><span class='line'><span class="nd">@Spatial</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&quot;location&quot;</span><span class="o">)</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Location</span> <span class="kd">implements</span> <span class="n">Coordinates</span><span class="o">,</span> <span class="n">Serializable</span> <span class="o">{</span>
+</span><span class='line'> <span class="kd">private</span> <span class="kt">long</span> <span class="n">id</span><span class="o">;</span>
+</span><span class='line'> <span class="kd">private</span> <span class="n">String</span> <span class="n">name</span><span class="o">;</span>
+</span><span class='line'> <span class="kd">private</span> <span class="n">Double</span> <span class="n">latitude</span><span class="o">;</span>
+</span><span class='line'> <span class="kd">private</span> <span class="n">Double</span> <span class="n">longitude</span><span class="o">;</span>
+</span><span class='line'> <span class="o">...</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Anotasi <code>@Indexed</code> mengindikasikan bahwa class tersebut akan diindex oleh Lucene. Anotasi <code>@Spatial</code> wajib agar data dapat diquery, entity juga diharuskan untuk mengimplementasikan interface <code>org.hibernate.search.spatial.Coordinates</code>.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Coordinates</span> <span class="o">{</span>
+</span><span class='line'> <span class="n">Double</span> <span class="nf">getLatitude</span><span class="o">();</span>
+</span><span class='line'> <span class="n">Double</span> <span class="nf">getLongitude</span><span class="o">();</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Selanjutnya mari membuat data awal.</p>
+
+<table class="table table-bordered table-condensed table-striped">
+ <thead>
+  <tr>
+   <th>ID</th>
+   <th>NAME</th>
+   <th>LATITUDE</th>
+   <th>LONGITUDE</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>1</td>
+   <td>Krukut</td>
+   <td>-6.1583</td>
+   <td>106.81458</td>
+  </tr>
+  <tr>
+   <td>2</td>
+   <td>Kampung Bali</td>
+   <td>-6.18476</td>
+   <td>106.8187</td>
+  </tr>
+  <tr>
+   <td>3</td>
+   <td>Kebon Sirih</td>
+   <td>-6.18595</td>
+   <td>106.83517</td>
+  </tr>
+  <tr>
+   <td>4</td>
+   <td>Senen</td>
+   <td>-6.17657</td>
+   <td>106.84376</td>
+  </tr>
+  <tr>
+   <td>5</td>
+   <td>Gondangdia</td>
+   <td>-6.19449</td>
+   <td>106.83105</td>
+  </tr>
+  <tr>
+   <td>6</td>
+   <td>Kemayoran</td>
+   <td>-6.16684</td>
+   <td>106.84874</td>
+  </tr>
+  <tr>
+   <td>7</td>
+   <td>Cikini</td>
+   <td>-6.19397</td>
+   <td>106.84221</td>
+  </tr>
+  <tr>
+   <td>8</td>
+   <td>Gunung Sahari</td>
+   <td>-6.16086</td>
+   <td>106.84462</td>
+  </tr>
+  <tr>
+   <td>9</td>
+   <td>Cideng</td>
+   <td>-6.17554</td>
+   <td>106.80891</td>
+  </tr>
+  <tr>
+   <td>10</td>
+   <td>Jati Pulo</td>
+   <td>-6.18186</td>
+   <td>106.80307</td>
+  </tr>
+  <tr>
+   <td>11</td>
+   <td>Tomang</td>
+   <td>-6.17307</td>
+   <td>106.79646</td>
+  </tr>
+  <tr>
+   <td>12</td>
+   <td>Glodok</td>
+   <td>-6.14738</td>
+   <td>106.81303</td>
+  </tr>
+  <tr>
+   <td>13</td>
+   <td>Cempaka Baru</td>
+   <td>-6.17059</td>
+   <td>106.86522</td>
+  </tr>
+ </tbody>
+</table>
+
+
+<p>Langkah terakhir adalah membuat query untuk menampilkan lokasi dalam radius 3 KM dari titik tengah.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="cm">/**</span>
+</span><span class='line'><span class="cm"> *</span>
+</span><span class='line'><span class="cm"> * @param radius</span>
+</span><span class='line'><span class="cm"> * Radius dalam Kilometer</span>
+</span><span class='line'><span class="cm"> * @param lat</span>
+</span><span class='line'><span class="cm"> * Latitude</span>
+</span><span class='line'><span class="cm"> * @param lng</span>
+</span><span class='line'><span class="cm"> * Longitude</span>
+</span><span class='line'><span class="cm"> * @return List Location dalam radius dari titik tengah (lat, lng)</span>
+</span><span class='line'><span class="cm"> */</span>
+</span><span class='line'><span class="kd">public</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">location</span><span class="o">&gt;</span> <span class="nf">getLocations</span><span class="o">(</span><span class="kt">int</span> <span class="n">radius</span><span class="o">,</span> <span class="kt">double</span> <span class="n">lat</span><span class="o">,</span> <span class="kt">double</span> <span class="n">lng</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'> <span class="n">FullTextEntityManager</span> <span class="n">em</span> <span class="o">=</span> <span class="n">Search</span><span class="o">.</span><span class="na">getFullTextEntityManager</span><span class="o">(</span><span class="n">entityManager</span><span class="o">);</span>
+</span><span class='line'> <span class="n">QueryBuilder</span> <span class="n">builder</span> <span class="o">=</span> <span class="n">em</span><span class="o">.</span><span class="na">getSearchFactory</span><span class="o">().</span><span class="na">buildQueryBuilder</span><span class="o">().</span><span class="na">forEntity</span><span class="o">(</span><span class="n">Location</span><span class="o">.</span><span class="na">class</span><span class="o">).</span><span class="na">get</span><span class="o">();</span>
+</span><span class='line'> <span class="n">Query</span> <span class="n">query</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="na">spatial</span><span class="o">().</span><span class="na">onCoordinates</span><span class="o">(</span><span class="s">&quot;location&quot;</span><span class="o">).</span><span class="na">within</span><span class="o">(</span><span class="n">radius</span><span class="o">,</span> <span class="n">Unit</span><span class="o">.</span><span class="na">KM</span><span class="o">).</span><span class="na">ofLatitude</span><span class="o">(</span><span class="n">lat</span><span class="o">).</span><span class="na">andLongitude</span><span class="o">(</span><span class="n">lng</span><span class="o">).</span><span class="na">createQuery</span><span class="o">();</span>
+</span><span class='line'> <span class="n">FullTextQuery</span> <span class="n">q</span> <span class="o">=</span> <span class="n">em</span><span class="o">.</span><span class="na">createFullTextQuery</span><span class="o">(</span><span class="n">query</span><span class="o">,</span> <span class="n">Location</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'> <span class="k">return</span> <span class="n">q</span><span class="o">.</span><span class="na">getResultList</span><span class="o">();</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p></location>
+Method diatas akan mencari instance (Location) yang berada di dalam radius dari latitude dan longitude yang telah dimasukkan.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/10/14/gis-part-1-mengkonsumsi-data-tiles-dengan-leaflet/">GIS Part 1 - Mengkonsumsi Data Tiles Dengan Leaflet</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Sesuai dengan prefix judul posting saya kali ini, GIS (Geographic Information System) atau dalam bahasa Indonesia disebut SIG (Sistem Informasi Geografis), saya akan membahas secara tuntas implementasi sederhana dari GIS dari awal hingga akhir. Ya, saya ulangi lagi, tuntas dari awal hingga akhir (jangan lupakan kata sederhana). Kasus yang akan saya jadikan contoh kali ini adalah pengolahan informasi lokasi berdasarkan koordinat, contoh paling populer dari kasus ini adalah Foursquare dan Google Latitude. Karena pembahasan kasus ini cukup panjang, saya akan membagi postingan ini menjadi 4 bab, diantaranya:</p>
+
+<ul>
+ <li><a href="http://blogs.mervpolis.com/roller/dwx/entry/gis_part_1_mengkonsumsi_data" target="_blank">Part 1 - Mengkonsumsi Data Tiles dengan Leaflet</a></li>
+ <li><a href="http://blogs.mervpolis.com/roller/dwx/entry/gis_part_2_pencarian_informasi" target="_blank">Part 2 - Pencarian Informasi Spasial menggunakan Hibernate Search/Lucene</a></li>
+ <li>Part 3 - Membuat REST API dengan S2Rest Plugin</li>
+ <li>Part 4 - Mengkonsumsi Informasi Spatial dengan Leaflet dan JQuery</li>
+</ul>
+
+
+<p>Lengkap bukan?</p>
+
+<h2>Mengkonsumsi Data Tiles dengan Leaflet</h2>
+
+<p> Tiles adalah ubin, lalu apa hubungannya ubin dengan peta? Analogi sederhananya adalah sebagai berikut, untuk melapisi dinding kamar mandi ataupun dapur di rumah anda, diperlukan kumpulan keramik berbentuk persegi yang ditempelkan secara rapi dalam susunan grid. Konsep inilah yang mendasari tiles pada peta, yaitu kumpulan bitmap berbentuk persegi yang disusun untuk membentuk sebuah peta.
+ Tiles secara umum adalah gambar berukuran 256 x 256 pixel, meskipun tidak selalu begitu, sebagai contoh CloudMade menyediakan gambar berukuran 64 x 64 pixel untuk kebutuhan mobile, namun secara keseluruhan gambar 256 x 256 pixel menjadi standart secara de facto yang dipimpin oleh Google Maps.
+ Dalam implementasinya banyak pustaka yang disediakan di internet untuk mengkonsumsi tiles. Untuk menampilakan ke dalam web umumnya pustaka dibangun diatas javascript, beberapa pustaka javascript yang populer digunakan adalah:</p>
+
+<ul>
+ <li style="text-align: justify; "><a href="https://developers.google.com/maps/" target="_blank">Google Maps API</a>. Sedikit catatan untuk penggunaan GMaps API, layanan ini bersifat komersial untuk kondisi tertentu. Google juga menentukan kebijakan dengan menyertakan iklan di dalamnya. Ingin menggunakan kode javascript GMaps pada local intranet? Sepertinya anda perlu membayar sekitar $10.000 per tahun untuk dapat melakukannya.</li>
+ <li style="text-align: justify; "><a href="http://openlayers.org/" target="_blank">Openlayers</a>, digunakan oleh <a href="http://www.openstreetmap.org/" target="_blank">OpenstreetMap</a>, kaya fitur, serta opensource. Akan tetapi cukup kompleks dan memiliki ukuran yang cukup besar untuk sebuah file javascript.</li>
+ <li style="text-align: justify; "><a href="http://leaflet.cloudmade.com/" target="_blank">Leaflet</a>, dikembangkan oleh CloudMade dibawah lisensi BSD. Cukup ringan, stabil dan cepat jika dibandingkan dengan Openlayers, serta desain kode berbasis OOP yang sangat mudah dipahami. Foursquare adalah salah satu website yang menggunakan Leaflet.</li>
+</ul>
+
+
+<p> Dalam contoh kali ini saya akan menggunakan leaflet sebagai pustaka untuk mengkonsumsi dan menampilkan data tiles dari Osmosa salah satu reimplementasi dari OpenstreetMap. Untuk menampilkan sebuah peta menggunakan leaflet adalah cukup mudah, berikut beberapa baris kode yang perlu ditulis untuk menampilkan sebuah peta dan menampilkan lokasi dimana anda berada.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'> <span class="kd">var</span> <span class="nx">map</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">L</span><span class="p">.</span><span class="nx">Map</span><span class="p">(</span><span class="s1">&#39;map&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nx">zoom</span><span class="o">:</span> <span class="mi">10</span><span class="p">});</span>
+</span><span class='line'> <span class="kd">var</span> <span class="nx">markers</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">L</span><span class="p">.</span><span class="nx">LayerGroup</span><span class="p">();</span>
+</span><span class='line'> <span class="nx">map</span><span class="p">.</span><span class="nx">addLayer</span><span class="p">(</span><span class="nx">markers</span><span class="p">);</span>
+</span><span class='line'> <span class="c1">// Mengambil tiles dari Osmosa.net</span>
+</span><span class='line'> <span class="kd">var</span> <span class="nx">tile</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">L</span><span class="p">.</span><span class="nx">TileLayer</span><span class="p">(</span><span class="s1">&#39;http://www.osmosa.net/osm_tiles3/{z}/{x}/{y}.png&#39;</span><span class="p">,</span> <span class="p">{</span>
+</span><span class='line'> <span class="nx">attribution</span><span class="o">:</span> <span class="s1">&#39;Tiles CC-BY-SA Osmosa, data © OpenStreetMap contributors.&#39;</span><span class="p">,</span>
+</span><span class='line'> <span class="nx">maxZoom</span><span class="o">:</span> <span class="mi">18</span><span class="p">,</span> <span class="nx">minZoom</span><span class="o">:</span> <span class="mi">3</span>
+</span><span class='line'> <span class="p">});</span>
+</span><span class='line'> <span class="nx">map</span><span class="p">.</span><span class="nx">addLayer</span><span class="p">(</span><span class="nx">tile</span><span class="p">);</span>
+</span><span class='line'> <span class="c1">// Mengambil posisi user, menampilkan titik dimana user berada</span>
+</span><span class='line'> <span class="nx">navigator</span><span class="p">.</span><span class="nx">geolocation</span><span class="p">.</span><span class="nx">getCurrentPosition</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'> <span class="nx">map</span><span class="p">.</span><span class="nx">setView</span><span class="p">(</span><span class="k">new</span> <span class="nx">L</span><span class="p">.</span><span class="nx">LatLng</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">coords</span><span class="p">.</span><span class="nx">latitude</span><span class="p">,</span> <span class="nx">p</span><span class="p">.</span><span class="nx">coords</span><span class="p">.</span><span class="nx">longitude</span><span class="p">),</span> <span class="mi">13</span><span class="p">);</span>
+</span><span class='line'> <span class="kd">var</span> <span class="nx">marker</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">L</span><span class="p">.</span><span class="nx">Marker</span><span class="p">([</span><span class="nx">p</span><span class="p">.</span><span class="nx">coords</span><span class="p">.</span><span class="nx">latitude</span><span class="p">,</span> <span class="nx">p</span><span class="p">.</span><span class="nx">coords</span><span class="p">.</span><span class="nx">longitude</span><span class="p">]);</span>
+</span><span class='line'> <span class="nx">marker</span><span class="p">.</span><span class="nx">addTo</span><span class="p">(</span><span class="nx">markers</span><span class="p">).</span><span class="nx">bindPopup</span><span class="p">(</span><span class="s1">&#39;Anda berada di sini!&#39;</span><span class="p">).</span><span class="nx">openPopup</span><span class="p">();</span>
+</span><span class='line'> <span class="p">});</span>
+</span><span class='line'><span class="p">})();</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Live Demo!</h3>
+
+<p><link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.4.4/leaflet.css"></p>
+
+<!--[if lte IE 8]>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.4.4/leaflet.ie.css" />
+<![endif]-->
+
+
+<script type="text/javascript" src="http://cdn.leafletjs.com/leaflet-0.4.4/leaflet.js"></script>
+
+
+<div class="well" style="min-height: 200px;" id="map"></div>
+
+
+<p>Browser anda mungkin akan meminta persetujuan karena contoh kode diatas mencoba melacak lokasi dimana anda berada, ijinkan untuk dapat melihat live demo. Jangan khawatir karena saya tidak akan menyimpan data lokasi atau apapun yang melanggar privasi anda.</p>
+
+<script type="text/javascript">
+(function() {
+    var map = new L.Map('map', {zoom: 10});
+    
+    var markers = new L.LayerGroup();
+    map.addLayer(markers);
+    
+//'http://www.osmosa.net/osm_tiles3/{z}/{x}/{y}.png'
+    var tile = new L.TileLayer('http://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: 'Tiles CC-BY-SA <a target="_blank" href="http://osmosa.net/">Osmosa</a>, data &copy; <a target="_blank" href="http://openstreetmap.org/">OpenStreetMap</a> contributors.',
+        maxZoom: 18, minZoom: 3
+    });
+    
+    map.addLayer(tile);
+            
+    navigator.geolocation.getCurrentPosition(function(p) {
+        map.setView(new L.LatLng(p.coords.latitude, p.coords.longitude), 13);
+        var marker = new L.Marker([p.coords.latitude, p.coords.longitude]);
+        marker.addTo(markers).bindPopup('Anda berada di sini!').openPopup();
+    });
+})();
+</script>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/07/27/menggunakan-method-post-get-put-delete-pada-html-form-tag-bisakah%3F/">Menggunakan Method POST, GET, PUT, DELETE Pada HTML Form Tag, Bisakah?</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Pernahkah anda menggunakan menggunakan http method selain <code>GET</code> dan <code>POST</code> pada browser. Yah, tentunya hanya hanya client seperti apache http client yang mensupport http request method seperti <code>PUT</code>, <code>DELETE</code>, ataupun <code>OPTION</code>. Sebenarnya saat ini hampir seluruh browser sudah dapat mengirimkan request dengan menggunakan http method tersebut melalui <code>XMLHttpRequest</code>, yap kuncinya ada di AJAX. Lalu bagaimana dengan html form tag?</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'> <span class="nt">&lt;form</span> <span class="na">method=</span><span class="s">&quot;PUT&quot;</span><span class="nt">&gt;&lt;/form&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Sayangnya semua browser hanya mendukung <code>POST</code> dan <code>GET</code> untuk request pada form tag, jadi ilustrasi yang saya tulis diatas tidak dapat diimplementasikan. Lalu? Tunggu dulu, buat anda yang sudah main-main dengan Yama, semuanya bisa jadi mungkin. Saya akan memberikan sedikit contoh bagaimana method selain <code>POST</code> dan <code>GET</code> bisa dikirimkan ke server melalui browser, menggunakan form tag tentunya.</p>
+
+<p>Sebagai pemanasan saya mulai dengan membuat sebuah proyek Yama.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>mvn archetype:generate \
+</span><span class='line'> -DarchetypeGroupId=org.meruvian.yama \
+</span><span class='line'>-DarchetypeArtifactId=yama-struts-archetype \
+</span><span class='line'>-DarchetypeVersion=1.0.2 \
+</span><span class='line'>-DgroupId=com.example.yama \
+</span><span class='line'>-DartifactId=my-first-yama</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Oke kemudian saya akan membuat dua buah file jsp dibawah <code>/src/main/webapp/WEB-INF/test</code>, satu untuk mengirim request dan yang satunya lagi untuk menerima hasil request.</p>
+
+<h3>index.jsp</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;form</span> <span class="na">method=</span><span class="s">&quot;delete&quot;</span> <span class="na">action=</span><span class="s">&quot;/test&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'> <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;submit&quot;</span> <span class="na">value=</span><span class="s">&quot;Test http method!&quot;</span> <span class="na">class=</span><span class="s">&quot;btn&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'><span class="nt">&lt;/form&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>success.jsp</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'>Http method : <span class="err">&lt;</span>%= request.getMethod() %&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Kemudian saya buat action class.
+ </div></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kn">package</span> <span class="n">com</span><span class="o">.</span><span class="na">example</span><span class="o">.</span><span class="na">yama</span><span class="o">.</span><span class="na">action</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.commons.logging.Log</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.commons.logging.LogFactory</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.meruvian.inca.struts2.rest.ActionResult</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.meruvian.inca.struts2.rest.annotation.Action</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.meruvian.inca.struts2.rest.annotation.Action.HttpMethod</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nd">@Action</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&quot;/&quot;</span><span class="o">)</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TestAction</span> <span class="o">{</span>
+</span><span class='line'><span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Log</span> <span class="n">LOG</span> <span class="o">=</span> <span class="n">LogFactory</span><span class="o">.</span><span class="na">getLog</span><span class="o">(</span><span class="n">TestAction</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nd">@Action</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&quot;/test&quot;</span><span class="o">,</span> <span class="n">method</span> <span class="o">=</span> <span class="n">HttpMethod</span><span class="o">.</span><span class="na">GET</span><span class="o">)</span>
+</span><span class='line'>  <span class="kd">public</span> <span class="n">ActionResult</span> <span class="nf">index</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">new</span> <span class="nf">ActionResult</span><span class="o">(</span><span class="s">&quot;/WEB-INF/test/index.jsp&quot;</span><span class="o">);</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nd">@Action</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&quot;/test&quot;</span><span class="o">,</span> <span class="n">method</span> <span class="o">=</span> <span class="n">HttpMethod</span><span class="o">.</span><span class="na">DELETE</span><span class="o">)</span>
+</span><span class='line'>  <span class="kd">public</span> <span class="n">ActionResult</span> <span class="nf">delete</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>    <span class="n">LOG</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&quot;Method delete executed!&quot;</span><span class="o">);</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">new</span> <span class="nf">ActionResult</span><span class="o">(</span><span class="s">&quot;/WEB-INF/test/success.jsp&quot;</span><span class="o">);</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Dan yang terakhir saya tambahkan link menu dengan mengedit file <code>menu.ftl</code> pada <code>/src/main/webapp/view</code></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;active&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;&lt;@s.url value=&amp;quot;/home&amp;quot; /&gt;&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;i</span> <span class="na">class=</span><span class="s">&quot;icon-home icon-white&quot;</span><span class="nt">&gt;&lt;/i&gt;</span> Home
+</span><span class='line'>  <span class="nt">&lt;/a&gt;</span>
+</span><span class='line'><span class="nt">&lt;/li&gt;</span>
+</span><span class='line'><span class="err">&lt;</span>#if request.session.getAttribute(&quot;SPRING_SECURITY_CONTEXT&quot;)??&gt;
+</span><span class='line'><span class="c">&lt;!-- Menu yang harus ditambahkan --&gt;</span>
+</span><span class='line'><span class="nt">&lt;li&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;#/test&quot;</span><span class="nt">&gt;</span>Test HTTP Method<span class="nt">&lt;/a&gt;</span>
+</span><span class='line'><span class="nt">&lt;/li&gt;</span>
+</span><span class='line'><span class="c">&lt;!-- End of menu yang harus ditambahkan --&gt;</span>
+</span><span class='line'><span class="nt">&lt;li&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;&lt;@s.url value=&quot;</span><span class="err">logout&quot;</span> <span class="nt">/&gt;</span>&quot;&gt;<span class="nt">&lt;/a&gt;</span>
+</span><span class='line'>  <span class="err">&lt;</span>@s.text name=&quot;frontent.logout.text&quot; /&gt;
+</span><span class='line'><span class="nt">&lt;/li&gt;</span>
+</span><span class='line'><span class="c">&lt;!--#if--&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Selanjutnya saya akan coba jalankan menggunakan jetty. <code>mvn jetty:run</code></p>
+
+<h3>Request:</h3>
+
+<p><img src="https://lh4.googleusercontent.com/-oUWCUUnNXEA/UBF9YoJg8XI/AAAAAAAAAZw/SVE1iKAX6DI/s800/2.png" alt="Request" /></p>
+
+<h3>Response:</h3>
+
+<p><img src="https://lh4.googleusercontent.com/-iVZgri-Fae8/UBF9YnV0ZhI/AAAAAAAAAZ0/qauYyl7HH2U/s800/1.png" alt="Response" /></p>
+
+<p>Secara teknis Yama menghandle setiap request pada tag form, kemudian mengkonversinya menjadi AJAX request. Jadi kita tidak perlu lagi membuat kode javascript untuk mengirimkan AJAX request.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/06/28/pakai-application-server-yang-mana%3F-%28ala-saya%29/">Pakai Application Server Yang Mana? (Ala Saya)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Setelah sekian abad tidak melihat kalender, baru sadar ini umur ternyata dah nambah banyak. Eeeaaaa, tidak terasa sudah dua tahun lebih saya terlibat dari satu projek ke projek, bergelantungan mondar-mandir. Yah tentunya sudah lumayan juga jumlah aplikasi yang telah terdeploy ke berbagai tempat dengan beragam jenis application server. Mulai dari aplikasi yang mengharuskan berjalan diatas JavaEE container hingga stack yang diluar standart JEE seperti Cimande dengan Struts2-Spring-Hibernate yang pastinya bisa jalan di application server manapun (dengan tambahan telaten dan istiqomah untuk beberapa spesifik application server).</p>
+
+<p>Yang akan saya bahas kali ini adalah beberapa pertimbangan (pribadi) tentang bagaimana memilih application server yang tepat untuk digunakan pada fase production. Sebagai permulaan ada 2 jenis kelompok besar dalam aplication server, kelompok pertama adalah full-blown Java EE container, sedangkan kelompompok ke-dua adalah servlet container. Kelompok pertama adalah dihuni oleh app server yang mendukung spesifikasi Java EE seperti EJB, JMS, JSF, dll, beberapa anggota kelompok ini adalah Glassfish, JBoss AS, Weblogic, Websphere, dan masih banyak lagi. Sedangkan kelompok ke-dua adalah app server yang tidak mendukung secara penuh spesifikasi JEE seperti Tomcat dan Jetty. Sudah dapat gambaran tentang dua kelompok besar tersebut? Oke, sekarang saya akan pilah-pilah sesuai dengan kemampuan masing-masih application server.</p>
+
+<h3>Mandat dari client</h3>
+
+<p>Yang satu ini tidak bisa di ganggu gugat, kebanyakan client memang sudah bekerja sama dengan vendor-vendor kesayangan mereka termasuk urusan application server. Jadi bila kondisi seperti ini terjadi maka aplikasi-lah yang akan saya jadikan prioritas utama agar kompatibel dengan spesifik application server. Application server dalam kasus ini biasanya didominasi oleh produk vendor propietary seperti WLS dan WAS.</p>
+
+<h3>Perlukah menggunakan teknologi Java EE?</h3>
+
+<p>Kalau boleh jujur saya punya pengalaman yang kurang baik dengan EJB (J2EE 1.4 waktu itu) yang diimplementasikan dalam aplikasi yang tidak terlalu besar (curhat). Ada yang bilang sih Java EE 6 sudah lebih baik. Pertimbangan selanjutnya adalah spesifikasi JEE yang lain seperti JMS, JSF, atau mungkin ESB, jika memang diperlukan saya akan mengutamakan app server opensource terlebih dahulu, dua favorit saya jatuh pada Glassfish dan JBossAS. Dua container tersebut memiliki komunitas yang cukup besar, tidak jarang saya menemukan penyelesaian suatu masalah cukup dengan mengetik keyword di google, bahkan tanpa perlu bertanya pada mailing list komunitasnya. Glassfish 3 sudah mendukung spesifikasi JEE 6, salah satu yang saya suka adalah fitur admin consolenya yang cukup lengkap, dan juga servlet engine-nya yang konon adalah fork dari Tomcat. JBossAS 7 cukup mengesankan dengan startup-nya yang sangat cepat termasuk admin consolenya yang sudah menggunakan ajax, walaupun menurut saya belum sekeren Glassfish punya. Dulu saya pernah berfikir setiap aplikasi yang bisa jalan di Tomcat pasti bisa di deploy di JEE container manapun, semuanya memang terbukti sebelum akhirnya saya bertemu dengan Weblogic, jadi mungkin tanpa alasan pertama saya sebisa mungkin akan menghindari app server yang satu ini.</p>
+
+<h3>Cukup dengan servlet container?</h3>
+
+<p>Saya jarang ambil pusing bila diharuskan mendeploy aplikasi dibawah platform Cimande ataupun Yama. Ya, pada kenyataannya kedua framework kebanggaan ini bisa berjalan diatas servlet container saja. Beberapa project yang saya kerjakan dideploy diatas Tomcat. Jetty? Jujur saja saya belum pernah mencoba Jetty untuk kebutuhan production, namun untuk kebutuhan servlet container saya rasa Tomcat ataupun Jetty, tidak ada pilihan yang salah diantara kedua produk tersebut.</p>
+
+<h3>Kebutuhan hit tinggi tanpa perlu banyak setting</h3>
+
+<p>Kalau yang satu ini saya belajar banyak dari roller, yap tempat saya posting blog ini yang hampir setahun lalu bermigrasi dengan mulus dari Tomcat6 ke Glassfish3. Setelah migrasi ke Glassfish beberapa problem seperti timeout yang rutin setiap kali terjadi hit tinggi berangsur menghilang. Apakah artinya Tomcat tidak lebih tangguh Glassfish? Tentunya tidak pula, tetapi untuk konfigurasi minim (walaupun naif jika harus membandingkan keduanya) saya lebih memilih aman dengan menggunakan Glassfish.</p>
+
+<p>Seluruh isi dari artikel ini merupakan opini subjektif berdasarkan pengalaman saya, apapun keputusan untuk menggunakan application server manapun dengan suatu alasan tertentu adalah menjadi hak masing-masih individu.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/06/12/mengimplementasikan-clean-url-parameter-dengan-inca-s2rest-plugin/">Mengimplementasikan Clean URL Parameter Dengan Inca S2Rest Plugin</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Sudah pernah baca blog saya sebelumnya tentang <code>Memanfaatkan Struts Action Mapper untuk Membuat Clean URL?</code></p>
+
+<p>Beberapa waktu yang lalu Meruvian melaunching Inca S2Rest Plugin, ya plugin untuk Struts2 dengan fitur utama mengadopsikan arsitektur REST ke dalam Struts2 tentunya. Secara garis besar plugin ini bisa dibilang sebagai fusion-nya Convention Plugin dengan Rest Plugin yang sudah ada sejak dahulu kala, yang jelas dengan implementasi berbeda serta fitur yang jelas lebih banyak, ceile. Seperti harapan yang menjadi kenyataan, setelah beberapa tahun terakhir kita utak-atik action mapper dan kawan-kawannya akhirnya jadilah sebuah plugin untuk mengisi celah fitur yang tidak disertakan pada plugin Struts2 yang lain.</p>
+
+<p>Pada artikel kali ini saya &lsquo;hanya&rsquo; akan membahas salah satu fitur dari Inca yaitu dukungan untuk membuat clean url parameter. Nanti dulu deh, untuk fitur-fitur lain akan saya kupas lebih tajam dalam Developer Blog, terpisah dari blog ini, untuk saat ini bisa main-main dulu ke wikinya.</p>
+
+<p>Ok, kembali ke laptop, Inca S2Rest menyediakan fitur anotasi untuk membuat konfigurasi dapat di-embed ke dalam kode java, sehingga meminimalisir konfigurasi xml yang harus dimaintain oleh developer. Salah satu anotasi yang powerful adalah @ActionParam, anotasi ini berada pada level field untuk menangkap request parameter yang dikirim ke dalam action class, yap no getter and setter anymore. Anotasi ini membantu kita untuk mendapatkan request parameter, lalu bagaimana dengan membuat clean url?</p>
+
+<p>Saya akan membuat sebuah contoh kasus sebuah action untuk menampilkan sebuah artikel berdasarkan tanggal lengkap beserta id dari artikel. Pertama kita tentukan format url yang akan digunakan: <code>/articles/{tahun}/{bulan}/{tanggal}/{id}</code></p>
+
+<p>Saya kutip sedikit dari wiki:</p>
+
+<blockquote><p>By default, the Inca S2RestPlugin use Regex Pattern Matcher for its Pattern Matcher.</p></blockquote>
+
+<p>Sehingga pattern yang sudah saya tulis sebelumnya sudah memenuhi kualifikasi untuk menentukan sebuah action sesuai dengan format url. Waktunya membatik:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nd">@Action</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&quot;/article&quot;</span><span class="o">)</span> <span class="c1">// Deklarasi action class</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ArticleAction</span> <span class="o">{</span>
+</span><span class='line'>  <span class="nd">@ActionParam</span><span class="o">(</span><span class="s">&quot;th&quot;</span><span class="o">)</span>
+</span><span class='line'>  <span class="kd">private</span> <span class="kt">int</span> <span class="n">year</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nd">@ActionParam</span><span class="o">(</span><span class="s">&quot;bln&quot;</span><span class="o">)</span>
+</span><span class='line'>  <span class="kd">private</span> <span class="kt">int</span> <span class="n">month</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nd">@ActionParam</span><span class="o">(</span><span class="s">&quot;tgl&quot;</span><span class="o">)</span>
+</span><span class='line'>  <span class="kd">private</span> <span class="kt">int</span> <span class="n">date</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nd">@ActionParam</span><span class="o">(</span><span class="s">&quot;id&quot;</span><span class="o">)</span>
+</span><span class='line'>  <span class="kd">private</span> <span class="n">String</span> <span class="n">articleId</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nd">@Action</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&quot;/{th}/{bln}/{tgl}/{id}&quot;</span><span class="o">,</span> <span class="n">method</span> <span class="o">=</span> <span class="n">HttpMethod</span><span class="o">.</span><span class="na">GET</span><span class="o">)</span>
+</span><span class='line'>  <span class="kd">public</span> <span class="n">String</span> <span class="nf">showArticle</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>  <span class="c1">// lakukan sesuka hati disini</span>
+</span><span class='line'>  <span class="c1">// parameter akan dengan deklarasi @ActionParam akan terisi</span>
+</span><span class='line'>  <span class="c1">// apabila request url sudah sesuai dengan pattern pada</span>
+</span><span class='line'>  <span class="c1">// properti &#39;name&#39; dalam @Action</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Langkah terakhir adalah membuat skenario request dengan url (sebagai contoh): /article/2012/05/04/release-inca-sudirman-thamrin-ditutup-selama-sepekan.</p>
+
+<h3>Menggunakan URL Pattern Matcher Lain</h3>
+
+<p>Walaupun secara default Inca S2Rest menggunakan regex pattern matcher, developer dapat merubah dengan implementasi pattern matcher lain cukup dengan merubah konfigurasi:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;constant</span> <span class="na">name=</span><span class="s">&quot;struts.patternMatcher&quot;</span> <span class="na">value=</span><span class="s">&quot;struts&quot;</span> <span class="nt">/&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Contoh diatas apabila developer menghendaki untuk menggunakan struts (default) pattern matcher, maka contoh kode yang harus digunakan adalah:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nd">@Action</span><span class="o">(</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;/article/*/*/*/*&quot;</span><span class="o">,</span> <span class="n">params</span><span class="o">=</span> <span class="o">{</span>
+</span><span class='line'>  <span class="nd">@Param</span><span class="o">(</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;th&quot;</span><span class="o">,</span> <span class="n">value</span><span class="o">=</span><span class="s">&quot;{1}&quot;</span><span class="o">),</span>
+</span><span class='line'>  <span class="nd">@Param</span><span class="o">(</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;bln&quot;</span><span class="o">,</span> <span class="n">value</span><span class="o">=</span><span class="s">&quot;{2}&quot;</span><span class="o">),</span>
+</span><span class='line'>  <span class="nd">@Param</span><span class="o">(</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;tgl&quot;</span><span class="o">,</span> <span class="n">value</span><span class="o">=</span><span class="s">&quot;{3}&quot;</span><span class="o">),</span>
+</span><span class='line'>  <span class="nd">@Param</span><span class="o">(</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;id&quot;</span><span class="o">,</span> <span class="n">value</span><span class="o">=</span><span class="s">&quot;{4}&quot;</span><span class="o">)</span>
+</span><span class='line'><span class="o">})</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Selamat mecoba dan mengimplementasikan Inca S2Rest Plugin pada aplikasi Struts2 anda.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/04/15/kekuatan-dibalik-proxy-dalam-java/">Kekuatan Dibalik Proxy Dalam Java</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Proxy sudah diperkenalkan sejak java 1.3, salah satu kekuatan (yang tidak tersembunyi) dari java yang sangat berguna dalam pembuatan aplikasi dengan tingkat modularitas tinggi.</p>
+
+<p>Sebelumnya kita ambil contoh dalam kehidupan coding sehari-hari, dengan atau tanpa disadari proxy ada dimana-mana seperti Spring yang mengimplementasikannya untuk AOP, Hibernate untuk lazy loading-nya, dan Google Guice dalam hal dependency Injection.</p>
+
+<p>Dalam Java, dynamic proxy adalah sebuah intance pengganti dari object sesungguhnya. Dengan proxy, pemanggilan sebuah method (method invocation) dapat dicegat (intercepted) sehingga kita dapat memasukkan cutom code sebelum ataupun setelah pemaggilan method. Sangat powerful bukan?</p>
+
+<p>Dalam penggunaannya, diluar dynamic proxy standart yang disediakan oleh JDK, banyak library yang menyediakan fitur proxy dalam penggunaannya, sebagai contoh Spring menyediakan JDK dynamic proxy dan CGLIB proxy bagi user untuk memilih salah satu. Begitu pula Hibernate yang menggunakan CGLIB untuk versi 3.x ke bawah yang kemudian berpindah menggunakan secara penuh Javassisst untuk menangani urusan proxy.
+Ada beberapa perbedaan antara JDK dynamic proxy dengan CGLIB serta Javassist, akan saya jelaskan sebagai berikut</p>
+
+<h3>JDK Dynamic Proxy</h3>
+
+<ul>
+<li>Proxy dibangun berdasarkan pada runtime interface, dengan kata lain proxy harus memiliki interface untuk dapat diciptakan.</li>
+<li>Karena proxy dipaksa untuk menjadi implementasi dari sudatu interface maka sudah dipastikan kita tidak bisa melakukan casting terhadap class lain.</li>
+<li>Object menjadi turunan dari <code>java.lang.reflect.Proxy</code></li>
+</ul>
+
+
+<p>Berikut contoh kode sedehananya, sebuah proxy yang akan menghalau setiap method bernama call dengan mengembalikan nilai null apapun nilainya.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">class</span> <span class="nc">DisableEveryCall</span> <span class="kd">implements</span> <span class="n">InvocationHandler</span> <span class="o">{</span>
+</span><span class='line'>  <span class="kd">private</span> <span class="n">Object</span> <span class="n">object</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">public</span> <span class="nf">DisableEveryCall</span><span class="o">(</span><span class="n">Object</span> <span class="n">object</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="o">.</span><span class="na">object</span> <span class="o">=</span> <span class="n">object</span><span class="o">;</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">public</span> <span class="n">Object</span> <span class="nf">invoke</span><span class="o">(</span><span class="n">Object</span> <span class="n">proxy</span><span class="o">,</span> <span class="n">Method</span> <span class="n">method</span><span class="o">,</span> <span class="n">Object</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Throwable</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="o">(</span><span class="n">method</span><span class="o">.</span><span class="na">getName</span><span class="o">().</span><span class="na">equalsIgnoreCase</span><span class="o">(</span><span class="s">&quot;call&quot;</span><span class="o">))</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">return</span> <span class="n">method</span><span class="o">.</span><span class="na">invoke</span><span class="o">(</span><span class="n">object</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Method invoke akan meng-intercept setiap method, dalam kasus ini hanya method dengan nama call yang akan mereturn null dengan apapun kondisinya. Kemudian berikut cara membuat proxy-nya.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">Callable</span> <span class="n">callable</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Callable</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>  <span class="kd">public</span> <span class="n">String</span> <span class="nf">call</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="s">&quot;Called!&quot;</span><span class="o">;</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">Proxy</span> <span class="n">proxy</span> <span class="o">=</span> <span class="o">(</span><span class="n">Proxy</span><span class="o">)</span> <span class="n">Proxy</span><span class="o">.</span><span class="na">newProxyInstance</span><span class="o">(</span><span class="n">Callable</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getClassLoader</span><span class="o">(),</span> <span class="k">new</span> <span class="n">Class</span><span class="o">[]</span> <span class="o">{</span> <span class="n">Callable</span><span class="o">.</span><span class="na">class</span> <span class="o">},</span> <span class="k">new</span> <span class="n">DisableEveryCall</span><span class="o">(</span><span class="n">callable</span><span class="o">));</span>
+</span><span class='line'><span class="n">callable</span> <span class="o">=</span> <span class="o">(</span><span class="n">Callable</span><span class="o">)</span> <span class="n">proxy</span><span class="o">;</span>
+</span><span class='line'><span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">callable</span><span class="o">.</span><span class="na">call</span><span class="o">());</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>CGLIB Proxy</h3>
+
+<ul>
+<li>Tidak mengharuskan interface.</li>
+<li>Proxy dibangun dengan cara mensub-classkan terhadap class sesungguhnya. Hal ini mengindikasikan bahwa class apapun yang digunakan dapat dimungkinkan untuk dijadikan proxy.</li>
+<li>CGLIB proxy bersifat final. Maka adalah sebuah hal sia-sia untuk memproxy sebuah proxy karena tidak akan berhasil.</li>
+</ul>
+
+
+<p>Mari membuat contoh yang agak berbeda, ketika kita memanggil method toString proxy akan mengembalikan dengan nilai null bagaimanapun caranya user melakukan override terhadap method tersebut.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">class</span> <span class="nc">DisableToString</span> <span class="kd">implements</span> <span class="n">MethodInterceptor</span> <span class="o">{</span>
+</span><span class='line'>  <span class="kd">public</span> <span class="n">Object</span> <span class="nf">intercept</span><span class="o">(</span><span class="n">Object</span> <span class="n">obj</span><span class="o">,</span> <span class="n">Method</span> <span class="n">method</span><span class="o">,</span> <span class="n">Object</span><span class="o">[]</span> <span class="n">args</span><span class="o">,</span> <span class="n">MethodProxy</span> <span class="n">proxy</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Throwable</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="s">&quot;toString&quot;</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">method</span><span class="o">.</span><span class="na">getName</span><span class="o">())</span> <span class="o">?</span> <span class="kc">null</span> <span class="o">:</span> <span class="n">proxy</span><span class="o">.</span><span class="na">invokeSuper</span><span class="o">(</span><span class="n">obj</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Pembuatan proxy dapat dilakukan dengan cara berikut</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">Enhancer</span> <span class="n">enhancer</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Enhancer</span><span class="o">();</span>
+</span><span class='line'><span class="n">enhancer</span><span class="o">.</span><span class="na">setSuperclass</span><span class="o">(</span><span class="n">Object</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'><span class="n">enhancer</span><span class="o">.</span><span class="na">setCallback</span><span class="o">(</span><span class="k">new</span> <span class="n">DisableToString</span><span class="o">());</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">Object</span> <span class="n">proxy</span> <span class="o">=</span> <span class="n">enhancer</span><span class="o">.</span><span class="na">create</span><span class="o">();</span>
+</span><span class='line'><span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">proxy</span><span class="o">.</span><span class="na">toString</span><span class="o">());</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Javassist Proxy</h3>
+
+<p>Tidak banyak perbedaan antara Javassist dengan CGLIB proxy, penjelasan tersebut dapat langsung saya ambil dari dokumentasi source-nya.</p>
+
+<blockquote><p>Package <code>javassist.util.proxy</code>
+Dynamic proxy (similar to Enhancer of cglib).</p></blockquote>
+
+<p>Perbedaan paling utama adalah kita tidak dapat menambahkan sebuah method baru kedalam Javassist proxy, sedangkan hal tersebut dimungkinkan pada CGLIB proxy. Serta fitur utama dari Javassist sendiri adalah bytecode manipulation library yang lebih mengedepankan manipulasi class pada saat compile-time bahkan mendefinisikan class baru pada saat run-time daripada memproxynya, sangat powerful dalam sisi lain tapi tidak dengan fitur proxy-nya. Berikut beberapa hal dalam Javassist proxy:</p>
+
+<ul>
+<li>Lebih lambat dari CGLIB proxy maupun JDK proxy (untuk saat ini)</li>
+</ul>
+
+
+<p>Agar mudah saya akan membuat contoh dengan pendekatan yang tidak jauh berbeda.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">class</span> <span class="nc">DisableToString</span> <span class="kd">implements</span> <span class="n">MethodHandler</span> <span class="o">{</span>
+</span><span class='line'>  <span class="kd">public</span> <span class="n">Object</span> <span class="nf">invoke</span><span class="o">(</span><span class="n">Object</span> <span class="n">self</span><span class="o">,</span> <span class="n">Method</span> <span class="n">thisMethod</span><span class="o">,</span> <span class="n">Method</span> <span class="n">proceed</span><span class="o">,</span> <span class="n">Object</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Throwable</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Langkah pembuatan proxy-nya pun hampir sama</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">ProxyFactory</span> <span class="n">factory</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ProxyFactory</span><span class="o">();</span>
+</span><span class='line'><span class="n">factory</span><span class="o">.</span><span class="na">setSuperclass</span><span class="o">(</span><span class="n">Object</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'><span class="n">factory</span><span class="o">.</span><span class="na">setFilter</span><span class="o">(</span><span class="k">new</span> <span class="n">MethodFilter</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>  <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">isHandled</span><span class="o">(</span><span class="n">Method</span> <span class="n">m</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="s">&quot;toString&quot;</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">m</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">Proxy</span> <span class="n">proxy</span> <span class="o">=</span> <span class="o">(</span><span class="n">javassist</span><span class="o">.</span><span class="na">util</span><span class="o">.</span><span class="na">proxy</span><span class="o">.</span><span class="na">Proxy</span><span class="o">)</span> <span class="n">factory</span><span class="o">.</span><span class="na">createClass</span><span class="o">().</span><span class="na">newInstance</span><span class="o">();</span>
+</span><span class='line'><span class="n">proxy</span><span class="o">.</span><span class="na">setHandler</span><span class="o">(</span><span class="k">new</span> <span class="n">DisableToString</span><span class="o">());</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">Object</span> <span class="n">object</span> <span class="o">=</span> <span class="n">proxy</span><span class="o">;</span>
+</span><span class='line'><span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">object</span><span class="o">.</span><span class="na">toString</span><span class="o">());</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Kesimpulan</h2>
+
+<p>Java memiliki banyak fitur menarik, salah satunya adalah dynamic proxy. Spring transaction manager dan Hibernate lazy loading mungkin adalah contoh yang paling mudah untuk memahami bagaimana proxy bekerja untuk meng-intercept sebuah method. Banyak pula library pembantu di luar sana yang menyediakan fitur proxy dengan berbagai keunggulan masing-masing.</p>
+
+<p>Enjoy.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/02/11/geliat-cloud-2012-tahunnya-paas%3F/">Geliat Cloud 2012, Tahunnya PaaS?</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><img src="https://lh4.googleusercontent.com/-ar9VGb8Qb9g/TzVrRIW6EsI/AAAAAAAAAXk/FFw5RKh-NGE/s800/cumulonimbus.jpg" title="Cloud" width="300" /></p>
+
+<p>Bicara soal 2012 kembali kita dihadapkan pada topik paling hot di dunia, pasti gak akan jauh-jauh dari isu akhir dari peradaban manusia. Yah, mungkin saya akan berkata hal serupa juga andaikan saat ini saya adalah pengguna smarphone nokia, hehehe&hellip; Lupakan.</p>
+
+<p>Kembali kita tarik mundur ke tahun lalu, tahun 2011 yang menurut saya jaman dimana meledaknya barang bernama Cloud. Sebuah infrastruktur/perangkat/informasi/servis/awan/-kabut/petir atau apalah namanya yang sulit dimengerti&hellip; Menjadi alasan yang saya anggap cukup kuat, kita tahu dengan populernya facebook, twitter, google, amazon youtube, dan masih banyak lagi web yang memposisikan dirinya sebagai Software as a Service (SaaS), yang secara tidak sadar telah membawa kita ke jaman sentralisasi data. Walauppun sulit untuk dijelaskan, kita dapat dengan mudah menyebut bahwa web-web tersebut adalah cloud.</p>
+
+<p>Lanjut ke topik utama bahasan, PaaS, ya Platform as a Service, nama dan istilahnya masih nyambung-nyambung dengan SaaS, dan tahun 2012 sepertinya adalah tahunnya PaaS. Mengapa begitu, indikasi paling nyata adalah dengan mulai menjamurnya penyedia layanan cloud seperti Amazon dengan EC2, Google dengan Google App Engine (GAE) dan google eclipse plugin-nya, RedHat dengan Openshift, VMWare dengan Cloudfoundry yang didukung dengan Springsource Tool Suite untuk mempermudah development dan proses deploy, tidak ketinggalan ada Jelastic yang dapat melakukan checkout source code dan secara otomatis mengcompile diudara, dan masih banyak lagi. Dan kabar baiknya sebagian besar yang saya sebutkan diatas rata-rata masih bersifat gratis, maka nikmatilah sebelum masa itu berakhir (yang pasti akan terjadi).</p>
+
+<p>Tidak dapat dipungkiri bahwa ini adalah trend, dan developer telah dihadapkan ke posisi yang lebih menyenangkan, menjauh dari model tradisional. Para pengembang aplikasi dapat lebih terfokus terhadap fungsionalitas dan dan kualitas aplikasi ketimbang memikirkan masalah struktur dibawahnya. Begitupun dengan penyedia layanan juga mendapatkan keuntungan dengan berfokus pada penyediaan dan pengelolaan terhadap suberdaya dan infrastrukturnya, kemudian menyediakannya sebagai produk PaaS yang diinginkan oleh user. Sama-sama untung bukan?</p>
+
+<p>Dunia cloud semakin membesar, dan 2012 adalah tahunnya, yang membawa developer terbang jauh ke awan, pilihan kita hanya ikut serta, mendahului, atau tertinggal. Dengan dunia IT yang kecepatan lajunya sudah sangat kencang, mau kemana?</p>
+
+<p><img src="https://lh5.googleusercontent.com/-1bPegkYH5Bs/TzZXPU9hdUI/AAAAAAAAAX4/P-WurIvPEb8/s144/google-app-engine.jpg" />
+<img src="https://lh6.googleusercontent.com/-cYd7JASkxFI/TzZXQm39q_I/AAAAAAAAAYA/kuTlM9oo2I0/s144/jelastic.jpg" />
+<img src="https://lh3.googleusercontent.com/-2ATs6H00HzE/TzZXOP5M4mI/AAAAAAAAAXw/PfwB09msk_o/s144/OpenShift.jpg" />
+<img src="https://lh4.googleusercontent.com/-H30ELfSm0Xk/TzZXPJSxbWI/AAAAAAAAAX8/zery9S5F9Qk/s144/VMW-LGO-CloudFoundry-217-square-300x300.png" />
+<img src="https://lh3.googleusercontent.com/-X5Xg7xmXobI/TzZXvQGfCKI/AAAAAAAAAYQ/wP7XE97qTTI/s144/AWS_LOGO_RGB_300px.jpg" /></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/01/16/yang-sering-dilakukan-siswa-dan-yang-sering-diabaikan-oleh-pembimbing-dalam-tugas-akhir/">Yang Sering Dilakukan Siswa Dan Yang Sering Diabaikan Oleh Pembimbing Dalam Tugas Akhir</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Akhir Desember lalu saya berkesempatan untuk menjadi penguji eksternal (dari pihak industri) mewakili Meruvian di salah satu SMK swasta top di Kota Malang. Sangat istimewa karena kampung halaman saya berada di Kota Batu yang berdempetan dengan Malang, berasa seperti tiket mudik gratis dimana malamnya saya bisa ketemu teman-teman lama sambil ngopi bareng di pinggiran Jl. Diponegoro, bertemu hawa dingin dan pemandangan gunung di kiri kanan yang asri. #eaaa berasa makin lebay dan gak nyambung dengan judul.</p>
+
+<p>Yap, setelah 2 hari mejeng di depan para siswa sebagai killer, disisi lain banyak diskusi menarik dengan para guru di setiap jeda dan seusai ujian mengenai kompetensi para siswa didiknya. Banyak point yang akhirnya disinggung, terutama masalah standart penyajian aplikasi seperti presentasi, pembuatan flow, DFD, ERD, laporan harcopy yang segepok dan banyak lagi hal-hal yang berbau teoritis yang menariknya belum pernah diajarkan sebelumnya kepada siswa, atau boleh juga dieja &lsquo;sudah diajarkan tapi sedikit&rsquo;, dimana point-point tersebut ada dalam lembar penilaian. Berbau menghakimi memang, yah tapi itu kenyataannya, dan saya yakin hal ini terjadi hampir di seluruh SMK (opini subjektif).</p>
+
+<p>Maka dari itu sebagai rekanan industri yang baik #ceile disini saya akan membeberkan beberapa hal yang sering dilakukan siswa dalam&nbsp;tugas akhir yang menjadi point penilaian penguji yang sering luput dari bagian pengarahan pembimbing. Semoga dapat menjadi referensi untuk siswa SMK yang akan menghadapi tugas akhir agar tidak melakukan hal-hal di berikut.</p>
+
+<p>Presentasi
+Software: Siswa selalu update, jaman semakin berkembang, tidak salah kalau presentasi harus pakai barang canggih. Maka dipakailah software yang bernama MS Office dengan versi keluaran minimal tahun 2007 (yang kita semua tahu sebagian bersar pasti bajakan).</p>
+
+<p>Estetika: Banyak gambar-gambar bertebaran di slide yang akhirnya berkesan kurang profesional. Ada yang full manga, ada yang suka warna biru sampai semua tulisan dikasih biru dengan backgroundnya laut (mana kelihatan), yang ngefans ayu tingting juga gak mau kalah gitu juga, gak lah.</p>
+
+<p>ERD: Sebagian besar menggunakan entity-relationship model</p>
+
+<p>sebagian kecil lainnya menggunakan object-relational model</p>
+
+<p>Saya juga baru tahu kalau ERD ada macam-macam modelnya :) tetapi object-relational model yang paling lazim digunakan dalam pembuatan aplikasi, ini yang bikin heran kenapa sebagian besar pakai entity-relational model.</p>
+
+<p>Detail teknologi: hampir semua hanya menulis, &ldquo;Java Web + MySql&rdquo;, &ldquo;PHP&rdquo;, atau &ldquo;Java Web + XAMPP&rdquo; (gak paham yang ini), tanpa dijelaskan secara detail pustaka apa saja yang digunakan, padahal untuk java pasti buanyak pustaka yang dicomot.</p>
+
+<h3>Pembatasan Kasus</h3>
+
+<p>Ini yang paling suka saya bahas, pengalaman saya juga sebagai siswa biasanya minim ide. Banyak ide yang dibuat seolah berbeda padahal isinya sama, seperti Aplikasi Toko, ada yang membuat Toko Bola online, Toko Musik onlie, dan toko-toko yang lainnya. Disinilah &lsquo;seharusnya&rsquo; peran pembimbing untuk mengarahkan siswa dalam hal kreatifitas yang sering luput.</p>
+
+<p>Ketuntasan aplikasi: ada cerita menarik ketika saya berhadapan dengan siswa yang membuat sebuah aplikasi pemesanan lapangan futsal online.</p>
+
+<blockquote><p>Siswa : (sambil mendemokan aplikasi) &ldquo;Berikut ini adalah form pemesanan. User yang akan menyewa lapangan harus mengisi form disini.&rdquo;</p>
+
+<p>Penguji : &ldquo;Tidak ada register/login? Jadi orang tidak dikenal bisa langsung pesan?&rdquo;</p>
+
+<p>Siswa : &ldquo;Mmmm, iya.&rdquo;</p>
+
+<p>Penguji : &ldquo;Oke silakan dilanjutkan.&rdquo;</p>
+
+<p>Siswa : (Masuk halaman admin) &ldquo;Kemudian orang yang pesan tadi datanya masuk ke halaman admin.&rdquo;</p>
+
+<p>Penguji : &ldquo;Kalau ada orang yang mau pesan di jam yang sama?&rdquo;</p>
+
+<p>Siswa : &ldquo;Tidak bisa.&rdquo;</p>
+
+<p>Penguji : &ldquo;Untuk pembayarannya bagaimana?&rdquo;</p>
+
+<p>Siswa : &ldquo;Ya&hellip; dibayar di tempat.&rdquo;</p>
+
+<p>Penguji : &ldquo;Kalau yang pesan tidak hadir di hari H?&rdquo;</p>
+
+<p>Siswa : (hening)</p>
+
+<p>Penguji : &ldquo;Kalau yang pesan gitu semua gimana hayo?&rdquo;</p>
+
+<p>Siswa : (hening)</p>
+
+<p>Penguji : (pasang muka baik) &ldquo;Kan seharusnya ada konfirmasi pembayaran, biar gak bangkrut usahanya.&rdquo;</p>
+
+<p>Siswa : (meringis)</p>
+
+<p>Penguji : &ldquo;Jadi aplikasi kamu gak tuntas dong, mmm dikasih nilai berapa yah&hellip;&rdquo;</p>
+
+<p>Siswa : (mewek)</p></blockquote>
+
+<p>Sedikit percakapan diatas bisa menjadi sedikit gambaran bagaimana membuat aplikasi seharusnya tuntas, yah lagi-lagi peran pembimbing untuk melakukan check terhadap aplikasi siswa sebelum datang hari akhir (tugas akhir maksudnya).</p>
+
+<p>Untuk sementara itu saja pengamatan saya tentang pelaksanaan tugas akhir kemarin, inti dari permasalahan yang saya angkat sebetulnya adalah kritikan untuk pembimbing sekolah yang terkadang (mohon maaf) kurang kejam untuk masalah lolos-meloloskan laporan akhir siswa, sehingga siswa seolah menjadi objek penyiksaan penguji eksternal, yang padahal memang sebetulnya aplikasinya belum layak untuk dijadikan tugas akhir. Tetapi terkadang malah diloloskan dengan alasan kasih sayang yang tanpa pandang bulu (opini subjektif). Masih banyak curahat yang belum sempat tersampaikan, mungkin lain kali bakal lebih panjang lagi bahasannya.</p>
+
+<p>Semoga SMK makin maju. Salam &ldquo;SMK Sakti Mandraguna, gak cuma bisa-bisaan&hellip;&rdquo;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2011/11/12/criteria-query-hibernate-dan-jpa-2.0-%28jpa2-part-1%29/">Criteria Query, Hibernate Dan JPA 2.0 (JPA2 Part 1)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Salah satu tambahan terbesar dari spesifikasi JPA (Java Persistence API) versi 2.0 adalah criteria query. Dirilis pada Desember 2009, JPA 2.0 menyediakan API baru yang memungkinkan penggunaan criteria query, meskipun kita tahu pada framework ORM seperti Hibernate sudah terlebih dahulu menyediakan criteria query sejak versi 3.0. Hmm, bagaimanapun JPA adalah spesifikasi standard untuk Persistence yang mana dengan JPA kita bisa memilih JPA provider seperti Hibernate, EclipseLink, OpenJPA, DataNucleus, ataupun ObjectDB sesuka hati tanpa perlu mengganti banyak konfigurasi karena seluruh abstraksi ada di bawah package javax.persistence.*</p>
+
+<p>Pada postingan kali ini saya akan mengulas tentang penggunaan Criteria Query pada JPA (dengan Hibernate sebagai persistence provider) dan Qriteria Query pada Hibernate (native).</p>
+
+<p>Sedikit berbeda dengan JPA 1.0, walaupun diklaim sebagai vendor-independent, kita tidak akan menemukan javax.persistence:javax.persistence:2.0 pada Maven Central, melainkan kita harus mencarinya pada masing-masing ORM vendor. Sebagai contoh jika kita menggunakan hibernate maka artifact untuk JPA 2.0 adalah</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;dependency&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;groupid&gt;</span>org.hibernate.javax.persistence<span class="nt">&lt;/groupid&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;artifactid&gt;</span>hibernate-jpa-2.0-api<span class="nt">&lt;/artifactid&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;version&gt;</span>1.0.0.Final<span class="nt">&lt;/version&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;type&gt;</span>jar<span class="nt">&lt;/type&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;scope&gt;</span>compile<span class="nt">&lt;/scope&gt;</span>
+</span><span class='line'><span class="nt">&lt;/dependency&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Oke marilah langsung saja kita menuju ke area perangnya, dimisalkan saya memiliki sebuah entity (karyawan).</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="nd">@Entity</span>
+</span><span class='line'><span class="nd">@Table</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&quot;pegawai&quot;</span><span class="o">)</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Pegawai</span> <span class="o">{</span>
+</span><span class='line'>  <span class="kd">private</span> <span class="kt">long</span> <span class="n">id</span><span class="o">;</span>
+</span><span class='line'>  <span class="kd">private</span> <span class="n">String</span> <span class="n">nama</span><span class="o">;</span>
+</span><span class='line'>  <span class="kd">private</span> <span class="n">String</span> <span class="n">telepon</span><span class="o">;</span>
+</span><span class='line'>  <span class="kd">private</span> <span class="n">String</span> <span class="n">alamat</span><span class="o">;</span>
+</span><span class='line'>  <span class="c1">// getter dan setter</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Selanjutnya mari membuat sebuah JPA Query untuk menangani sebuah pencarian berdasarkan nama atau alamat pegawai.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>SELECT p FROM Pegawai WHERE p.nama LIKE :nama OR p.alamat LIKE :alamat</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Criteria Query</h2>
+
+<h3>Hibernate</h3>
+
+<p>Citeria query pada hibernate umunya cukup mudah, kita tinggal mendefinisikan class entity pada saat pembuatan criteria, kemudian memasukkan masing-masing ekspresi menggunakan class <code>org.hibernate.Criterion</code>.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">pegawai</span><span class="o">&gt;</span> <span class="nf">getKaryawanByCriteriaH</span><span class="o">(</span><span class="n">String</span> <span class="n">nama</span><span class="o">,</span> <span class="n">String</span> <span class="n">alamat</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>  <span class="n">Session</span> <span class="n">session</span> <span class="o">=</span> <span class="n">sessionFactory</span><span class="o">.</span><span class="na">getCurrentSession</span><span class="o">();</span>
+</span><span class='line'>  <span class="n">Criteria</span> <span class="n">criteria</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="na">createCriteria</span><span class="o">(</span><span class="n">Pegawai</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'>  <span class="n">criteria</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">Restrictions</span><span class="o">.</span><span class="na">like</span><span class="o">(</span><span class="s">&quot;nama&quot;</span><span class="o">,</span> <span class="n">nama</span><span class="o">));</span>
+</span><span class='line'>  <span class="n">criteria</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">Restrictions</span><span class="o">.</span><span class="na">like</span><span class="o">(</span><span class="s">&quot;alamat&quot;</span><span class="o">,</span> <span class="n">alamat</span><span class="o">));</span>
+</span><span class='line'>  <span class="k">return</span> <span class="n">criteria</span><span class="o">.</span><span class="na">list</span><span class="o">();</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>JPA</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Pegawai</span><span class="o">&gt;</span> <span class="nf">getKaryawanByCriteria</span><span class="o">(</span><span class="n">String</span> <span class="n">nama</span><span class="o">,</span> <span class="n">String</span> <span class="n">alamat</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>  <span class="n">CriteriaBuilder</span> <span class="n">builder</span> <span class="o">=</span> <span class="n">entityManager</span><span class="o">.</span><span class="na">getCriteriaBuilder</span><span class="o">();</span>
+</span><span class='line'>  <span class="n">CriteriaQuery</span><span class="o">&lt;</span><span class="n">Pegawai</span><span class="o">&gt;</span> <span class="n">query</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="na">createQuery</span><span class="o">(</span><span class="n">Pegawai</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'>  <span class="n">Root</span> <span class="o">&lt;</span><span class="n">Pegawai</span><span class="o">&gt;</span> <span class="n">root</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="na">from</span><span class="o">(</span><span class="n">Pegawai</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'>  <span class="n">query</span><span class="o">.</span><span class="na">where</span><span class="o">(</span><span class="n">builder</span><span class="o">.</span><span class="na">like</span><span class="o">(</span><span class="n">root</span><span class="o">.&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="n">get</span><span class="o">(</span><span class="s">&quot;nama&quot;</span><span class="o">),</span> <span class="n">nama</span><span class="o">),</span> <span class="n">builder</span><span class="o">.</span><span class="na">like</span><span class="o">(</span><span class="n">root</span><span class="o">.&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="n">get</span><span class="o">(</span><span class="s">&quot;alamat&quot;</span><span class="o">),</span> <span class="n">alamat</span><span class="o">));</span>
+</span><span class='line'>  <span class="k">return</span> <span class="n">entityManager</span><span class="o">.</span><span class="na">createQuery</span><span class="o">(</span><span class="n">query</span><span class="o">).</span><span class="na">getResultList</span><span class="o">();</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Sekilas tidak jauh berbeda citeria query pada Hibernate dengan JPA, akan tetapi sedikit yang terlihat jelas spesifikasi JPA sedikit lebih kompleks (baca: njelimet) dibandingkan criteria query pada Hibernate.</p>
+
+<h3>JPA Metamodel</h3>
+
+<p>Criteria Query pada JPA berbasiskan metamodel dari class yang telah terdaftar pada Persistence Unit. JPA 2 mendefinisikan typesafe Criteria API baru yang mengizinkan criteria query dibangun secara rapi/kuat. Penggunaan meta model pada JPA dan beberapa metode otomasi pembuatannya akan saya bahas pada postingan selanjutnya.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2011/11/08/deploy-cimande-pada-weblogic-10.3/">Deploy Cimande Pada Weblogic 10.3</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Baru hangat-hangat nih, berbarengan dengan Release Blueoxygen Cimande versi 2.0, ada request untuk menjalankannya pada Weblogic Middleware versi 10.3. Semula saya pikir gak akan jauh beda dengan server-server enterprise lain yang pernah saya coba seperti Glassfish (saja). Dengan bermodal pede (tempe kedele) saya coba jalankan dengan menggunakan Cargo Maven Plugin dengan menambahkan konfigurasi seperti ini:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;plugin&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;groupid&gt;</span>org.codehaus.cargo<span class="nt">&lt;/groupid&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;artifactid&gt;</span>cargo-maven2-plugin<span class="nt">&lt;/artifactid&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;version&gt;</span>1.1.3<span class="nt">&lt;/version&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;configuration&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;container&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;containerid&gt;</span>weblogic103x<span class="nt">&lt;/containerid&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;home&gt;</span>/home/dian/Oracle/Middleware/wlserver_10.3/<span class="nt">&lt;/home&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/container&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;cargo.protocol&gt;</span>http<span class="nt">&lt;/cargo.protocol&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;cargo.hostname&gt;</span>localhost<span class="nt">&lt;/cargo.hostname&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;cargo.servlet.port&gt;</span>7001<span class="nt">&lt;/cargo.servlet.port&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;cargo.weblogic.administrator.user&gt;</span>default<span class="nt">&lt;/cargo.weblogic.administrator.user&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;cargo.weblogic.administrator.password&gt;</span>guecakep<span class="nt">&lt;/cargo.weblogic.administrator.password&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;context&gt;</span>cimande<span class="nt">&lt;/context&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/configuration&gt;</span>
+</span><span class='line'><span class="nt">&lt;/plugin&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Dan benar ketika saya jalankan dengan perintah clean verify cargo:run, mantra yang tidak diharapkan muncul</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Caused By: java.lang.ClassNotFoundException: org.apache.struts2.views.JspSupportServlet
+</span><span class='line'>   at weblogic.utils.classloaders.GenericClassLoader.findLocalClass(GenericClassLoader.java:297)
+</span><span class='line'>   at weblogic.utils.classloaders.GenericClassLoader.findClass(GenericClassLoader.java:270)
+</span><span class='line'>   at weblogic.utils.classloaders.ChangeAwareClassLoader.findClass(ChangeAwareClassLoader.java:64)
+</span><span class='line'>   at java.lang.ClassLoader.loadClass(ClassLoader.java:307)
+</span><span class='line'>   at java.lang.ClassLoader.loadClass(ClassLoader.java:248)
+</span><span class='line'>   at weblogic.utils.classloaders.GenericClassLoader.loadClass(GenericClassLoader.java:179)
+</span><span class='line'>   ...</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Yap, class yang diinginkan tidak ditemukan, dan ajaibnya seluruh library yang dibutuhkan (termasuk struts2-core-2.x.jar dimana terdapat class (org.apache.struts2.views.JspSupportServlet) sudah ada di folder webapp library (WEB-INF/lib) di dalam WAR yang telah dicompile. Googling punya googling ada sedikit pencerahan, dimana seluruh library yang dibutuhkan oleh webapp harus diletakkan di root EAR project. Ya benar, agak aneh, ada pemaksaan untuk menjadikan project saya menjadi enterprise archive, walaupun didalamnya tidak ada EJB-nya. Sehingga untuk struktur maven-nya pun berubah menjadi seperti ini.</p>
+
+<p>Ada satu parent project yang memiliki 2 module yaitu berupa webapp (dengan packaging WAR) dan ear (dengan packaging EAR).</p>
+
+<p>Karena semua library akan diletakkan pada EAR maka untuk menghindari duplikasi file jar, maka ada sedikit perubahan scope cimande-core pada webapp dari compile menjadi provided, artinya library tidak akan ikut disertakan ketika webapp di package menjadi WAR.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;dependency&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;groupid&gt;</span>org.blueoxygen.cimande<span class="nt">&lt;/groupid&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;artifactid&gt;</span>cimande-core<span class="nt">&lt;/artifactid&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;version&gt;</span>${cimande.sdk.version}<span class="nt">&lt;/version&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;scope&gt;</span>provided<span class="nt">&lt;/scope&gt;</span>
+</span><span class='line'><span class="nt">&lt;/dependency&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Berikut isi dari konfigurasi pom.xml pada parent project</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+</span><span class='line'><span class="nt">&lt;project</span> <span class="na">xmlns=</span><span class="s">&quot;http://maven.apache.org/POM/4.0.0&quot;</span> <span class="na">xmlns:xsi=</span><span class="s">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span>
+</span><span class='line'>    <span class="na">xsi:schemaLocation=</span><span class="s">&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;modelVersion&gt;</span>4.0.0<span class="nt">&lt;/modelVersion&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;groupId&gt;</span>org.blueoxygen.cimande<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;version&gt;</span>1.0<span class="nt">&lt;/version&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;artifactId&gt;</span>cimande-enterprise-parent<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;packaging&gt;</span>pom<span class="nt">&lt;/packaging&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;name&gt;</span>Cimande Enterprise Parent<span class="nt">&lt;/name&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;properties&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;cimande.sdk.version&gt;</span>2.0<span class="nt">&lt;/cimande.sdk.version&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/properties&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;modules&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;module&gt;</span>ear<span class="nt">&lt;/module&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;module&gt;</span>webapp<span class="nt">&lt;/module&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/modules&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;build&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;pluginManagement&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;plugins&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;plugin&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;artifactId&gt;</span>maven-site-plugin<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;configuration&gt;</span>
+</span><span class='line'>                        <span class="nt">&lt;unzipCommand&gt;</span>/usr/bin/unzip -o &gt; err.txt<span class="nt">&lt;/unzipCommand&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;/configuration&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/plugin&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;/plugins&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/pluginManagement&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/build&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;dependencies&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;dependency&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;groupId&gt;</span>org.blueoxygen.cimande<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;artifactId&gt;</span>cimande-core<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;version&gt;</span>${cimande.sdk.version}<span class="nt">&lt;/version&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/dependency&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/dependencies&gt;</span>
+</span><span class='line'><span class="nt">&lt;/project&gt;</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Dan Cargo Maven Plugin untuk menjalankan Weblogic saya letakkan pada pom.xml module ear, untuk mendeploy aplikasi dalam bentuk EAR.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;project&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;modelVersion&gt;</span>4.0.0<span class="nt">&lt;/modelVersion&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;groupId&gt;</span>org.blueoxygen.cimande<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;artifactId&gt;</span>cimande-enterprise<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;packaging&gt;</span>ear<span class="nt">&lt;/packaging&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;version&gt;</span>1.0<span class="nt">&lt;/version&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;name&gt;</span>Cimande Enterprise<span class="nt">&lt;/name&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;parent&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;groupId&gt;</span>org.blueoxygen.cimande<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;artifactId&gt;</span>cimande-enterprise-parent<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;version&gt;</span>1.0<span class="nt">&lt;/version&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/parent&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;dependencies&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;dependency&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;groupId&gt;</span>org.blueoxygen.cimande<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;artifactId&gt;</span>cimande-webapp<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;version&gt;</span>1.0<span class="nt">&lt;/version&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;type&gt;</span>war<span class="nt">&lt;/type&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/dependency&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/dependencies&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;build&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;plugins&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;plugin&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;artifactId&gt;</span>maven-ear-plugin<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;configuration&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;generateApplicationXml&gt;</span>true<span class="nt">&lt;/generateApplicationXml&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;defaultLibBundleDir&gt;</span>lib/<span class="nt">&lt;/defaultLibBundleDir&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;archive&gt;</span>
+</span><span class='line'>                        <span class="nt">&lt;manifest&gt;</span>
+</span><span class='line'>                            <span class="nt">&lt;addClasspath&gt;</span>true<span class="nt">&lt;/addClasspath&gt;</span>
+</span><span class='line'>                        <span class="nt">&lt;/manifest&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;/archive&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/configuration&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;/plugin&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;plugin&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;groupId&gt;</span>org.codehaus.cargo<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;artifactId&gt;</span>cargo-maven2-plugin<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;version&gt;</span>1.1.3<span class="nt">&lt;/version&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;configuration&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;container&gt;</span>
+</span><span class='line'>                        <span class="nt">&lt;containerId&gt;</span>weblogic103x<span class="nt">&lt;/containerId&gt;</span>
+</span><span class='line'>                        <span class="nt">&lt;home&gt;</span>/home/dian/Oracle/Middleware/wlserver_10.3/<span class="nt">&lt;/home&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;/container&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;cargo.protocol&gt;</span>http<span class="nt">&lt;/cargo.protocol&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;cargo.hostname&gt;</span>localhost<span class="nt">&lt;/cargo.hostname&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;cargo.servlet.port&gt;</span>7001<span class="nt">&lt;/cargo.servlet.port&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;cargo.weblogic.administrator.user&gt;</span>default<span class="nt">&lt;/cargo.weblogic.administrator.user&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;cargo.weblogic.administrator.password&gt;</span>tulalit13<span class="nt">&lt;/cargo.weblogic.administrator.password&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;context&gt;</span>cimande<span class="nt">&lt;/context&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/configuration&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;/plugin&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/plugins&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/build&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;properties&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;cimande.sdk.version&gt;</span>2.0<span class="nt">&lt;/cimande.sdk.version&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/properties&gt;</span>
+</span><span class='line'><span class="nt">&lt;/project&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Tak lupa yang terakhir (juga hasil googling) buat file weblogic-application.xml pada direktori {ear.home}/src/main/application/META-INF/, yang merupakan file deployment descriptor spesifik Weblogic server untuk application.xml dari Sun Microsystem. Dalam file ini konfigurasi yang dibutuhkan seperti shared library dideskripsikan.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="c">&lt;!--?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?--&gt;</span>
+</span><span class='line'><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+</span><span class='line'><span class="nt">&lt;weblogic-application</span>
+</span><span class='line'>    <span class="na">xmlns=</span><span class="s">&quot;http://www.bea.com/ns/weblogic/weblogic-application&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;application-param&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;param-name&gt;</span>webapp.encoding.default<span class="nt">&lt;/param-name&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;param-value&gt;</span>UTF-8<span class="nt">&lt;/param-value&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/application-param&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;prefer-application-packages&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;package-name&gt;</span>antlr.*<span class="nt">&lt;/package-name&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;package-name&gt;</span>javax.persistence.*<span class="nt">&lt;/package-name&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;package-name&gt;</span>org.apache.commons.*<span class="nt">&lt;/package-name&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;package-name&gt;</span>org.springframework.*<span class="nt">&lt;/package-name&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;package-name&gt;</span>org.hibernate.*<span class="nt">&lt;/package-name&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/prefer-application-packages&gt;</span>
+</span><span class='line'><span class="nt">&lt;/weblogic-application&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Dan akhirnya setelah semua mantra yang dituliskan diatas dijalankan satu per satu secara berurutan, maka tibalah saat-saat yang mendebarkan yaitu menjalankan aplikasi. Berikut langkah-langkah untuk menjalankannya.</p>
+
+<ul>
+<li>Masuk ke dalam direktori parent-project, kemudian masukkan perintah <code>mvn clean install</code> untuk menginstal ear dan webapp pada repository lokal.</li>
+<li>Masuk ke dalam direktori ear kemudian jalankan perintah <code>mvn cargo:run</code></li>
+<li>Muka browser, pada contoh konfigurasi diatas Cimande dapat diakses melalui <a href="http://localhost:7001/cimande-webapp">http://localhost:7001/cimande-webapp</a></li>
+</ul>
+
+
+<p>Dan akhirnya dengan modal pede + googling saya berhasil menjalankan BlueOxygen Cimande pada Weblogic Server.</p>
+
+<p>NB: mengingat konfigurasi diatas cukup rumit, tim developer saat ini sedang mempersiapkan Maven archetype untuk mempermudah user mengembangkan Cimande project diatas Weblogic dengan cukup menggenerate archetype yang akan segera tersedia di maven central.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  <div class="pagination">
+    
+      <a class="prev" href="">&larr; Older</a>
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+  </div>
+</div>
+<aside class="sidebar">
+  
+    
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Dian Aditya -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> | Themed with <a href="https://github.com/lucaslew/whitespace">Whitespace</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=279596272235062&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

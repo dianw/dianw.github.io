@@ -1,0 +1,334 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Memanfaatkan Struts Action Mapper Untuk Membuat Clean URL - Dian Aditya</title>
+  <meta name="author" content="Dian Aditya">
+
+  
+  <meta name="description" content="Ini merupakan salah satu favorit saya yang ada di Struts yaitu ActionMapper. Biar lebih jelas berikut saya kutip sedikit dari dokumentasi Struts2. &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://diian.org/blog/2010/09/29/memanfaatkan-struts-action-mapper-untuk-membuat-clean-url">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Dian Aditya" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet" type="text/css">
+<!--- MathJax Configuration -->
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+<meta property="fb:app_id" content="279596272235062" />
+
+  
+
+</head>
+
+<body   class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Dian Aditya</a></h1>
+  
+    <h2>Penjahit Digital.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+  
+  
+  
+  
+<ul class="subscription">
+  <li><a href="https://github.com/dianw" rel="subscribe-github" title="@dianw on GitHub">GitHub</a></li>
+</ul>
+  
+  
+  
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:diian.org" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      
+        <h1 class="entry-title">Memanfaatkan Struts Action Mapper Untuk Membuat Clean URL</h1>
+      
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Ini merupakan salah satu favorit saya yang ada di Struts yaitu ActionMapper. Biar lebih jelas berikut saya kutip sedikit dari dokumentasi Struts2.
+ ActionMapper interface menyediakan pemetaan antara HTTP Request dan Action Invocation Request atau sebaliknya.
+ Lebih sederhananya dengan mengimplementasikan ActionMapper ini kita dapat menentukan action class yang akan dieksekusi berdasarkan HttpServletRequest yang kita terima.
+ Sebagai contoh saya ingin mengubah gaya url seperti berikut ini
+ &nbsp;</p>
+
+<pre>http://domain/project/employe?id=1234</pre>
+
+
+<p> &nbsp;
+ menjadi
+ &nbsp;</p>
+
+<pre>http://domain/project/employe/1234</pre>
+
+
+<p> &nbsp;
+ sehingga saya menentukan bahwa baris setelah nama project merupakan nama action (/employee) dan baris setelah nama action adalah id (/1234).
+ Berikut kodenya</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'> <span class="kn">package</span> <span class="n">com</span><span class="o">.</span><span class="na">mervpolis</span><span class="o">.</span><span class="na">dwx</span><span class="o">.</span><span class="na">struts</span><span class="o">.</span><span class="na">mapper</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">java.util.HashMap</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">javax.servlet.http.HttpServletRequest</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.struts2.dispatcher.mapper.ActionMapping</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.struts2.dispatcher.mapper.DefaultActionMapper</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">com.opensymphony.xwork2.config.ConfigurationManager</span><span class="o">;</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyCustomMapper</span> <span class="kd">extends</span> <span class="n">DefaultActionMapper</span> <span class="o">{</span>
+</span><span class='line'> <span class="kd">public</span> <span class="n">ActionMapping</span> <span class="nf">getMapping</span><span class="o">(</span><span class="n">HttpServletRequest</span> <span class="n">request</span><span class="o">,</span>
+</span><span class='line'> <span class="n">ConfigurationManager</span> <span class="n">configManager</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'> <span class="n">ActionMapping</span> <span class="n">mapping</span> <span class="o">=</span> <span class="kd">super</span><span class="o">.</span><span class="na">getMapping</span><span class="o">(</span><span class="n">request</span><span class="o">,</span> <span class="n">configManager</span><span class="o">);</span>
+</span><span class='line'> <span class="cm">/**</span>
+</span><span class='line'><span class="cm"> * Ketika bukan action yang dipanggil</span>
+</span><span class='line'><span class="cm"> * ex: http://domain/project/gambar.jpg</span>
+</span><span class='line'><span class="cm"> */</span>
+</span><span class='line'> <span class="k">if</span> <span class="o">(</span><span class="n">mapping</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span>
+</span><span class='line'> <span class="k">return</span> <span class="n">mapping</span><span class="o">;</span>
+</span><span class='line'> <span class="k">if</span> <span class="o">(</span><span class="n">mapping</span><span class="o">.</span><span class="na">getParams</span><span class="o">()</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span>
+</span><span class='line'> <span class="n">mapping</span><span class="o">.</span><span class="na">setParams</span><span class="o">(</span><span class="k">new</span> <span class="n">HashMap</span>
+</span><span class='line'> <span class="o">());</span>
+</span><span class='line'> <span class="c1">// Menambil url path</span>
+</span><span class='line'> <span class="n">String</span> <span class="n">path</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="na">getServletPath</span><span class="o">().</span><span class="na">substring</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
+</span><span class='line'> <span class="c1">// Memotong-motong path diantara karakter &#39;/&#39;</span>
+</span><span class='line'> <span class="n">String</span> <span class="n">actions</span><span class="o">[]</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="na">split</span><span class="o">(</span><span class="s">&quot;/&quot;</span><span class="o">);</span>
+</span><span class='line'> <span class="c1">// Array terakhir sebagai id</span>
+</span><span class='line'> <span class="n">String</span> <span class="n">id</span> <span class="o">=</span> <span class="n">actions</span><span class="o">[</span><span class="n">actions</span><span class="o">.</span><span class="na">length</span> <span class="o">-</span> <span class="mi">1</span><span class="o">];</span>
+</span><span class='line'> <span class="c1">// Array sebelum id sebagai actionName</span>
+</span><span class='line'> <span class="n">String</span> <span class="n">actionName</span> <span class="o">=</span> <span class="n">actions</span><span class="o">[</span><span class="n">actions</span><span class="o">.</span><span class="na">length</span> <span class="o">-</span> <span class="mi">2</span><span class="o">];</span>
+</span><span class='line'> <span class="n">mapping</span><span class="o">.</span><span class="na">setName</span><span class="o">(</span><span class="n">actionName</span><span class="o">);</span>
+</span><span class='line'> <span class="n">mapping</span><span class="o">.</span><span class="na">getParams</span><span class="o">().</span><span class="na">put</span><span class="o">(</span><span class="s">&quot;id&quot;</span><span class="o">,</span> <span class="n">id</span><span class="o">);</span>
+</span><span class='line'> <span class="k">return</span> <span class="n">mapping</span><span class="o">;</span>
+</span><span class='line'> <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p> Selanjutnya tinggal mendaftarkan ActionMapper dengan menambahkan properti pada struts.properties</p>
+
+<pre>struts.mapper.class=com.mervpolis.dwx.struts.mapper.MyCustomMapper</pre>
+
+
+<p> atau dalam struts.xml</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;constant</span> <span class="na">name=</span><span class="s">&quot;struts.mapper.class&quot;</span> <span class="na">value=</span><span class="s">&quot;com.mervpolis.dwx.struts.mapper.MyCustomMapper&quot;</span> <span class="nt">/&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p> Kemudian action class cukup membuat method setId(String id) untuk mendapatkan id dari url, tidak hanya action class, dengan memanipulasi ActionMapper ini kita dapat pula menentukan method yang akan dieksekusi ketika action class dipanggil.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+
+
+  <span class="byline author vcard">Authored by <span class="fn">
+  
+    Dian Aditya
+  
+  </span></span>
+
+
+      
+
+
+
+
+
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://diian.org/blog/2010/09/29/memanfaatkan-struts-action-mapper-untuk-membuat-clean-url/" data-via="" data-counturl="http://diian.org/blog/2010/09/29/memanfaatkan-struts-action-mapper-untuk-membuat-clean-url/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+    <div class="fb-like" data-layout="button_count" data-send="false" data-width="300" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2010/09/19/hibernate-event-listener/" title="Previous Post: Hibernate Event Listener">&laquo; Hibernate Event Listener</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2010/10/06/jsp-taglib-at-velocity-nah-lho.../" title="Next Post: JSP Taglib at Velocity, Nah lho...">JSP Taglib at Velocity, Nah lho... &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+
+
+  <section>
+    <h1>Comments</h1>
+    <div id="facebook_comments" aria-live="polite">
+      <noscript>Please enable JavaScript to view the comments powered by facebook</a></noscript>
+<div
+  class="fb-comments"
+  data-href="http://diian.org/blog/2010/09/29/memanfaatkan-struts-action-mapper-untuk-membuat-clean-url/"
+  data-num-posts="5"
+  data-width="100%"></div>
+    </div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Dian Aditya -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> | Themed with <a href="https://github.com/lucaslew/whitespace">Whitespace</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=279596272235062&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

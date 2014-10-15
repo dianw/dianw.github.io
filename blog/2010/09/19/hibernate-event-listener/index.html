@@ -1,0 +1,595 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Hibernate Event Listener - Dian Aditya</title>
+  <meta name="author" content="Dian Aditya">
+
+  
+  <meta name="description" content="Barusan saya baca-baca tentang database trigger dan sempat coba-coba, malas juga ternyata nulis kodenya yang begitu banyak :p benar-benar programmer &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://diian.org/blog/2010/09/19/hibernate-event-listener">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Dian Aditya" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet" type="text/css">
+<!--- MathJax Configuration -->
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+<meta property="fb:app_id" content="279596272235062" />
+
+  
+
+</head>
+
+<body   class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Dian Aditya</a></h1>
+  
+    <h2>Penjahit Digital.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+  
+  
+  
+  
+<ul class="subscription">
+  <li><a href="https://github.com/dianw" rel="subscribe-github" title="@dianw on GitHub">GitHub</a></li>
+</ul>
+  
+  
+  
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:diian.org" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      
+        <h1 class="entry-title">Hibernate Event Listener</h1>
+      
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Barusan saya baca-baca tentang database trigger dan sempat coba-coba, malas juga ternyata nulis kodenya yang begitu banyak :p benar-benar programmer yang buruk, hehehehe&hellip; Dan seperti apa yang saya inginkan, tuink&hellip; sangat tepat, ternyata hibernate juga menyediakan fasilitas yang mirip seperti trigger pada database, yaitu Hibernate Event. Sebuah mekanisme yang akan otomatis dijalankan apabila pemicu dipanggil. Untuk penjelasan lebih lanjut tentang event dan trigger bisa lihat di sini dan di sini (lagi-lagi males nulis :p).
+ Langsung saja ke kasusnya&hellip;
+ Saya mempunyai dua buah entity yaitu Produk dan CatatanAktivitasProduk. Dan saya akan membuat sebuah mekanisme agar hibernate secara otomatis manambahkan baris data pada CatatanAktivitasProduk ketika user melakukan transaksi (CRUD) data terhadap table Produk. Baris data berupa tanggal transaksi, aktivitas (lihat, tambah, perbarui, ataupun hapus), dan id produk yang terpengaruh akibat transaksi yang dilakukan oleh user tersebut.
+ Pertama berikut entity yang saya butuhkan.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'> <span class="kn">package</span> <span class="n">com</span><span class="o">.</span><span class="na">mervpolis</span><span class="o">.</span><span class="na">dwx</span><span class="o">.</span><span class="na">hibernate</span><span class="o">.</span><span class="na">entity</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">javax.persistence.Column</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">javax.persistence.Entity</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">javax.persistence.GeneratedValue</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">javax.persistence.GenerationType</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">javax.persistence.Id</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">javax.persistence.Table</span><span class="o">;</span>
+</span><span class='line'><span class="nd">@Entity</span>
+</span><span class='line'><span class="nd">@Table</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Produk</span> <span class="o">{</span>
+</span><span class='line'> <span class="nd">@Id</span>
+</span><span class='line'> <span class="nd">@GeneratedValue</span><span class="o">(</span><span class="n">strategy</span> <span class="o">=</span> <span class="n">GenerationType</span><span class="o">.</span><span class="na">IDENTITY</span><span class="o">)</span>
+</span><span class='line'> <span class="kd">private</span> <span class="kt">long</span> <span class="n">id</span><span class="o">;</span>
+</span><span class='line'> <span class="nd">@Column</span>
+</span><span class='line'> <span class="kd">private</span> <span class="n">String</span> <span class="n">nama</span><span class="o">;</span>
+</span><span class='line'> <span class="nd">@Column</span>
+</span><span class='line'> <span class="kd">private</span> <span class="kt">long</span> <span class="n">harga</span><span class="o">;</span>
+</span><span class='line'> <span class="nd">@Column</span>
+</span><span class='line'> <span class="kd">private</span> <span class="n">String</span> <span class="n">deskripsi</span><span class="o">;</span>
+</span><span class='line'> <span class="kd">public</span> <span class="kt">long</span> <span class="nf">getId</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'> <span class="k">return</span> <span class="n">id</span><span class="o">;</span>
+</span><span class='line'> <span class="o">}</span>
+</span><span class='line'> <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setId</span><span class="o">(</span><span class="kt">long</span> <span class="n">id</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'> <span class="k">this</span><span class="o">.</span><span class="na">id</span> <span class="o">=</span> <span class="n">id</span><span class="o">;</span>
+</span><span class='line'> <span class="o">}</span>
+</span><span class='line'> <span class="kd">public</span> <span class="n">String</span> <span class="nf">getNama</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'> <span class="k">return</span> <span class="n">nama</span><span class="o">;</span>
+</span><span class='line'> <span class="o">}</span>
+</span><span class='line'> <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setNama</span><span class="o">(</span><span class="n">String</span> <span class="n">nama</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'> <span class="k">this</span><span class="o">.</span><span class="na">nama</span> <span class="o">=</span> <span class="n">nama</span><span class="o">;</span>
+</span><span class='line'> <span class="o">}</span>
+</span><span class='line'> <span class="kd">public</span> <span class="kt">long</span> <span class="nf">getHarga</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'> <span class="k">return</span> <span class="n">harga</span><span class="o">;</span>
+</span><span class='line'> <span class="o">}</span>
+</span><span class='line'> <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setHarga</span><span class="o">(</span><span class="kt">long</span> <span class="n">harga</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'> <span class="k">this</span><span class="o">.</span><span class="na">harga</span> <span class="o">=</span> <span class="n">harga</span><span class="o">;</span>
+</span><span class='line'> <span class="o">}</span>
+</span><span class='line'> <span class="kd">public</span> <span class="n">String</span> <span class="nf">getDeskripsi</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'> <span class="k">return</span> <span class="n">deskripsi</span><span class="o">;</span>
+</span><span class='line'> <span class="o">}</span>
+</span><span class='line'> <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setDeskripsi</span><span class="o">(</span><span class="n">String</span> <span class="n">deskripsi</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'> <span class="k">this</span><span class="o">.</span><span class="na">deskripsi</span> <span class="o">=</span> <span class="n">deskripsi</span><span class="o">;</span>
+</span><span class='line'> <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'> <span class="kn">package</span> <span class="n">com</span><span class="o">.</span><span class="na">mervpolis</span><span class="o">.</span><span class="na">dwx</span><span class="o">.</span><span class="na">hibernate</span><span class="o">.</span><span class="na">entity</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">java.sql.Timestamp</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">javax.persistence.Column</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">javax.persistence.Entity</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">javax.persistence.GeneratedValue</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">javax.persistence.GenerationType</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">javax.persistence.Id</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">javax.persistence.JoinColumn</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">javax.persistence.ManyToOne</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">javax.persistence.Table</span><span class="o">;</span>
+</span><span class='line'><span class="nd">@Entity</span>
+</span><span class='line'><span class="nd">@Table</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CatatanAktivitasProduk</span> <span class="o">{</span>
+</span><span class='line'> <span class="nd">@Id</span>
+</span><span class='line'> <span class="nd">@GeneratedValue</span><span class="o">(</span><span class="n">strategy</span><span class="o">=</span><span class="n">GenerationType</span><span class="o">.</span><span class="na">IDENTITY</span><span class="o">)</span>
+</span><span class='line'> <span class="kd">private</span> <span class="kt">long</span> <span class="n">id</span><span class="o">;</span>
+</span><span class='line'> <span class="nd">@ManyToOne</span>
+</span><span class='line'> <span class="nd">@JoinColumn</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&quot;produk_id&quot;</span><span class="o">)</span>
+</span><span class='line'> <span class="kd">private</span> <span class="n">Produk</span> <span class="n">produk</span><span class="o">;</span>
+</span><span class='line'> <span class="nd">@Column</span>
+</span><span class='line'> <span class="kd">private</span> <span class="n">String</span> <span class="n">aktivitas</span><span class="o">;</span>
+</span><span class='line'> <span class="nd">@Column</span>
+</span><span class='line'> <span class="kd">private</span> <span class="n">Timestamp</span> <span class="n">tanggal</span><span class="o">;</span>
+</span><span class='line'> <span class="kd">public</span> <span class="kt">long</span> <span class="nf">getId</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'> <span class="k">return</span> <span class="n">id</span><span class="o">;</span>
+</span><span class='line'> <span class="o">}</span>
+</span><span class='line'> <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setId</span><span class="o">(</span><span class="kt">long</span> <span class="n">id</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'> <span class="k">this</span><span class="o">.</span><span class="na">id</span> <span class="o">=</span> <span class="n">id</span><span class="o">;</span>
+</span><span class='line'> <span class="o">}</span>
+</span><span class='line'> <span class="kd">public</span> <span class="n">Produk</span> <span class="nf">getProduk</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'> <span class="k">return</span> <span class="n">produk</span><span class="o">;</span>
+</span><span class='line'> <span class="o">}</span>
+</span><span class='line'> <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setProduk</span><span class="o">(</span><span class="n">Produk</span> <span class="n">produk</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'> <span class="k">this</span><span class="o">.</span><span class="na">produk</span> <span class="o">=</span> <span class="n">produk</span><span class="o">;</span>
+</span><span class='line'> <span class="o">}</span>
+</span><span class='line'> <span class="kd">public</span> <span class="n">String</span> <span class="nf">getAktivitas</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'> <span class="k">return</span> <span class="n">aktivitas</span><span class="o">;</span>
+</span><span class='line'> <span class="o">}</span>
+</span><span class='line'> <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setAktivitas</span><span class="o">(</span><span class="n">String</span> <span class="n">aktivitas</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'> <span class="k">this</span><span class="o">.</span><span class="na">aktivitas</span> <span class="o">=</span> <span class="n">aktivitas</span><span class="o">;</span>
+</span><span class='line'> <span class="o">}</span>
+</span><span class='line'> <span class="kd">public</span> <span class="n">Timestamp</span> <span class="nf">getTanggal</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'> <span class="k">return</span> <span class="n">tanggal</span><span class="o">;</span>
+</span><span class='line'> <span class="o">}</span>
+</span><span class='line'> <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setTanggal</span><span class="o">(</span><span class="n">Timestamp</span> <span class="n">tanggal</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'> <span class="k">this</span><span class="o">.</span><span class="na">tanggal</span> <span class="o">=</span> <span class="n">tanggal</span><span class="o">;</span>
+</span><span class='line'> <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p> Dan selanjutnya adalah membuat listenernya yang akan otomatis melakukan aksi ketika user melakukan CRUD terhadap table Produk. Untuk contoh saya akan membuat listener yang akan menjalankan event setelah user melakukan insert data terhadap table Produk.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'> <span class="kn">package</span> <span class="n">com</span><span class="o">.</span><span class="na">mervpolis</span><span class="o">.</span><span class="na">dwx</span><span class="o">.</span><span class="na">hibernate</span><span class="o">.</span><span class="na">event</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">java.sql.Timestamp</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.hibernate.Session</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.hibernate.event.PostInsertEvent</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.hibernate.event.PostInsertEventListener</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">com.mervpolis.dwx.hibernate.entity.CatatanAktivitasProduk</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">com.mervpolis.dwx.hibernate.entity.Produk</span><span class="o">;</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ProdukEventListener</span> <span class="kd">implements</span> <span class="n">PostInsertEventListener</span> <span class="o">{</span>
+</span><span class='line'> <span class="nd">@Override</span>
+</span><span class='line'> <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onPostInsert</span><span class="o">(</span><span class="n">PostInsertEvent</span> <span class="n">event</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'> <span class="k">if</span> <span class="o">(</span><span class="n">event</span><span class="o">.</span><span class="na">getEntity</span><span class="o">()</span> <span class="k">instanceof</span> <span class="n">Produk</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'> <span class="n">CatatanAktivitasProduk</span> <span class="n">aktivitasProduk</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CatatanAktivitasProduk</span><span class="o">();</span>
+</span><span class='line'> <span class="n">Session</span> <span class="n">session</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="na">getSession</span><span class="o">();</span>
+</span><span class='line'> <span class="n">aktivitasProduk</span><span class="o">.</span><span class="na">setAktivitas</span><span class="o">(</span><span class="s">&quot;tambah&quot;</span><span class="o">);</span>
+</span><span class='line'> <span class="n">aktivitasProduk</span><span class="o">.</span><span class="na">setProduk</span><span class="o">((</span><span class="n">Produk</span><span class="o">)</span> <span class="n">event</span><span class="o">.</span><span class="na">getEntity</span><span class="o">());</span>
+</span><span class='line'> <span class="n">aktivitasProduk</span>
+</span><span class='line'> <span class="o">.</span><span class="na">setTanggal</span><span class="o">(</span><span class="k">new</span> <span class="n">Timestamp</span><span class="o">(</span><span class="n">System</span><span class="o">.</span><span class="na">currentTimeMillis</span><span class="o">()));</span>
+</span><span class='line'> <span class="n">session</span><span class="o">.</span><span class="na">saveOrUpdate</span><span class="o">(</span><span class="n">aktivitasProduk</span><span class="o">);</span>
+</span><span class='line'> <span class="o">}</span>
+</span><span class='line'> <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p> Selanjutnya adalah mendaftarkan listener pada konfigurasi hibernate (hibernate.cfg.xml).</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="c">&lt;!--?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?--&gt;</span>
+</span><span class='line'><span class="nt">&lt;hibernate-configuration&gt;</span>
+</span><span class='line'> <span class="nt">&lt;session-factory&gt;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;hibernate.connection.driver_class&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>   com.mysql.jdbc.Driver
+</span><span class='line'>  <span class="nt">&lt;/property&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;hibernate.connection.password&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>   admin
+</span><span class='line'>  <span class="nt">&lt;/property&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;hibernate.connection.url&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>   jdbc:mysql://localhost:3306/test
+</span><span class='line'>  <span class="nt">&lt;/property&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;hibernate.connection.username&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>   root
+</span><span class='line'>  <span class="nt">&lt;/property&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;hibernate.dialect&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>   org.hibernate.dialect.MySQLDialect
+</span><span class='line'>  <span class="nt">&lt;/property&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;hibernate.hbm2ddl.auto&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>   update
+</span><span class='line'>  <span class="nt">&lt;/property&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;hibernate.show_sql&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>   true
+</span><span class='line'>  <span class="nt">&lt;/property&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;mapping</span> <span class="na">class=</span><span class="s">&quot;com.mervpolis.dwx.hibernate.entity.Produk&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;mapping</span> <span class="na">class=</span><span class="s">&quot;com.mervpolis.dwx.hibernate.entity.CatatanAktivitasProduk&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;listener</span> <span class="na">class=</span><span class="s">&quot;com.mervpolis.dwx.hibernate.event.ProdukEventListener&quot;</span> <span class="na">type=</span><span class="s">&quot;post-insert&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'> <span class="nt">&lt;/session-factory&gt;</span>
+</span><span class='line'><span class="nt">&lt;/hibernate-configuration&gt;</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p> Selanjutnya saya akan mencoba menjalankan sebuah kode yang akan melakukan insert data terhadap table produk.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'> <span class="kn">package</span> <span class="n">com</span><span class="o">.</span><span class="na">mervpolis</span><span class="o">.</span><span class="na">dwx</span><span class="o">.</span><span class="na">hibernate</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.hibernate.Session</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.hibernate.SessionFactory</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.hibernate.cfg.AnnotationConfiguration</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">com.mervpolis.dwx.hibernate.entity.Produk</span><span class="o">;</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">InsertData</span> <span class="o">{</span>
+</span><span class='line'> <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'> <span class="n">SessionFactory</span> <span class="n">factory</span> <span class="o">=</span> <span class="k">new</span> <span class="n">AnnotationConfiguration</span><span class="o">().</span><span class="na">configure</span><span class="o">()</span>
+</span><span class='line'> <span class="o">.</span><span class="na">buildSessionFactory</span><span class="o">();</span>
+</span><span class='line'> <span class="n">Session</span> <span class="n">session</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="na">openSession</span><span class="o">();</span>
+</span><span class='line'> <span class="n">Produk</span> <span class="n">produk</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Produk</span><span class="o">();</span>
+</span><span class='line'> <span class="n">session</span><span class="o">.</span><span class="na">getTransaction</span><span class="o">().</span><span class="na">begin</span><span class="o">();</span>
+</span><span class='line'> <span class="n">produk</span><span class="o">.</span><span class="na">setNama</span><span class="o">(</span><span class="s">&quot;Sendal Jepit&quot;</span><span class="o">);</span>
+</span><span class='line'> <span class="n">produk</span><span class="o">.</span><span class="na">setHarga</span><span class="o">(</span><span class="mi">2000</span><span class="o">);</span>
+</span><span class='line'> <span class="n">produk</span><span class="o">.</span><span class="na">setDeskripsi</span><span class="o">(</span><span class="s">&quot;Sendal yang dijepit&quot;</span><span class="o">);</span>
+</span><span class='line'> <span class="n">session</span><span class="o">.</span><span class="na">saveOrUpdate</span><span class="o">(</span><span class="n">produk</span><span class="o">);</span>
+</span><span class='line'> <span class="n">session</span><span class="o">.</span><span class="na">getTransaction</span><span class="o">().</span><span class="na">commit</span><span class="o">();</span>
+</span><span class='line'> <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p> Dan apa yang terjadi ketika kode diatas saya jalankan? Secara otomatis hibernate akan menjalankan perintah yang saya taruh pada listener. Nahlho mana buktinya? Ada baiknya bila anda buktikan sendiri dengan mencoba membuat mekanisme seperti di atas :) selamat mencoba.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+
+
+  <span class="byline author vcard">Authored by <span class="fn">
+  
+    Dian Aditya
+  
+  </span></span>
+
+
+      
+
+
+
+
+
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://diian.org/blog/2010/09/19/hibernate-event-listener/" data-via="" data-counturl="http://diian.org/blog/2010/09/19/hibernate-event-listener/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+    <div class="fb-like" data-layout="button_count" data-send="false" data-width="300" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2010/09/08/menggunakan-spring-annotation-%28struts2-spring-%232%29/" title="Previous Post: Menggunakan Spring Annotation (Struts2-Spring #2)">&laquo; Menggunakan Spring Annotation (Struts2-Spring #2)</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2010/09/29/memanfaatkan-struts-action-mapper-untuk-membuat-clean-url/" title="Next Post: Memanfaatkan Struts Action Mapper untuk Membuat Clean URL">Memanfaatkan Struts Action Mapper untuk Membuat Clean URL &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+
+
+  <section>
+    <h1>Comments</h1>
+    <div id="facebook_comments" aria-live="polite">
+      <noscript>Please enable JavaScript to view the comments powered by facebook</a></noscript>
+<div
+  class="fb-comments"
+  data-href="http://diian.org/blog/2010/09/19/hibernate-event-listener/"
+  data-num-posts="5"
+  data-width="100%"></div>
+    </div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Dian Aditya -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> | Themed with <a href="https://github.com/lucaslew/whitespace">Whitespace</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=279596272235062&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

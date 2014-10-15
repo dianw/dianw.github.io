@@ -1,0 +1,279 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Menginstall Maven 3 Pada Ubuntu - Dian Aditya</title>
+  <meta name="author" content="Dian Aditya">
+
+  
+  <meta name="description" content="Sekedar mengembalikan postingan yang sempat hilang ditelan bumi :D Posted on August 03, 2011 by Dian Aditya Hari ini saya telah berhasil mengupgrade &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://diian.org/blog/2011/10/07/menginstall-maven-3-pada-ubuntu">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Dian Aditya" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet" type="text/css">
+<!--- MathJax Configuration -->
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+<meta property="fb:app_id" content="279596272235062" />
+
+  
+
+</head>
+
+<body   class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Dian Aditya</a></h1>
+  
+    <h2>Penjahit Digital.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+  
+  
+  
+  
+<ul class="subscription">
+  <li><a href="https://github.com/dianw" rel="subscribe-github" title="@dianw on GitHub">GitHub</a></li>
+</ul>
+  
+  
+  
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:diian.org" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      
+        <h1 class="entry-title">Menginstall Maven 3 Pada Ubuntu</h1>
+      
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Sekedar mengembalikan postingan yang sempat hilang ditelan bumi :D
+ Posted on August 03, 2011 by Dian Aditya
+ Hari ini saya telah berhasil mengupgrade versi Maven pada ubuntu 10.04 saya dari versi 2.x ke versi 3.x. Berbeda dengan versi sebelumnya, Maven 3 tidak tersedia pada paket update Ubuntu, sehingga cara instalasinya berbeda pula dengan Maven 2.
+ Ilustrasi</p>
+
+<pre>$sudo apt-get install maven3</pre>
+
+
+<p> Mungkin akan terasa nikmat jika perintah diatas berjalan dengan mulus :D
+ Ok, saya rasa semuanya sudah mengerti. Berikut proses instalasi Maven 3 pada Ubuntu secara manual. Sebelumnya pastikan java telah terinstal terlebih dahulu.</p>
+
+<ol>
+ <li>Download paket Maven 3 <a href="%0Ahttp://apache.the.net.id//maven/binaries/apache-maven-3.0.3-bin.tar.gz" title="Maven 3">di sini.</a> Kemudian extract paket yang sudah didownload. <br>
+Pada kasus ini paket saya extract pada <code>/opt</code></li>
+ <pre>$tar -xzvf apache-maven-3.0.3-bin.tar.gz</pre>
+ <li>Tambahkan PATH variable pada environtment file. </li>
+ <pre>$sudo gedit /etc/environment</pre>
+ <pre>
+JAVA_HOME="/opt/jdk1.6.0_21"
+M3_HOME="/opt/apache-maven-3.0.3"
+MAVEN_HOME="/opt/apache-maven-3.0.3"
+M3="/opt/apache-maven-3.0.3/bin"
+</pre>
+ <li>Rubah PATH, biasanya seperti ini</li>
+ <pre>PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games"</pre>
+ Menjadi seperti berikut
+ <pre>PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/opt/apache-maven-3.0.3/bin"</pre>
+ <li>Logout</li>
+</ol>
+
+
+<p> Setelah proses diata selesai, login kembali, kemudian lakukan cek versi maven.</p>
+
+<pre>$mvn -version</pre>
+
+
+<p> jika berhasil seharusnya konsol mengembalikan hasil seperti berikut</p>
+
+<pre>
+Apache Maven 3.0.3 (r1075438; 2011-03-01 00:31:09+0700)
+Maven home: /opt/apache-maven-3.0.3
+Java version: 1.6.0_21, vendor: Sun Microsystems Inc.
+Java home: /opt/jdk1.6.0_21/jre
+Default locale: en_US, platform encoding: UTF-8
+OS name: "linux", version: "2.6.32-33-generic", arch: "i386", family: "unix"
+</pre>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+
+
+  <span class="byline author vcard">Authored by <span class="fn">
+  
+    Dian Aditya
+  
+  </span></span>
+
+
+      
+
+
+
+
+
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://diian.org/blog/2011/10/07/menginstall-maven-3-pada-ubuntu/" data-via="" data-counturl="http://diian.org/blog/2011/10/07/menginstall-maven-3-pada-ubuntu/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+    <div class="fb-like" data-layout="button_count" data-send="false" data-width="300" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2011/07/14/cimande-2.0-rc2-release/" title="Previous Post: Cimande 2.0-RC2 Release">&laquo; Cimande 2.0-RC2 Release</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2011/11/08/deploy-cimande-pada-weblogic-10.3/" title="Next Post: Deploy Cimande pada Weblogic 10.3">Deploy Cimande pada Weblogic 10.3 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+
+
+  <section>
+    <h1>Comments</h1>
+    <div id="facebook_comments" aria-live="polite">
+      <noscript>Please enable JavaScript to view the comments powered by facebook</a></noscript>
+<div
+  class="fb-comments"
+  data-href="http://diian.org/blog/2011/10/07/menginstall-maven-3-pada-ubuntu/"
+  data-num-posts="5"
+  data-width="100%"></div>
+    </div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Dian Aditya -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> | Themed with <a href="https://github.com/lucaslew/whitespace">Whitespace</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=279596272235062&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

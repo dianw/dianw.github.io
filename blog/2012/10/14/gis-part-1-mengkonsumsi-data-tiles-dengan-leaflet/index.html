@@ -1,0 +1,338 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>GIS Part 1 - Mengkonsumsi Data Tiles Dengan Leaflet - Dian Aditya</title>
+  <meta name="author" content="Dian Aditya">
+
+  
+  <meta name="description" content="Sesuai dengan prefix judul posting saya kali ini, GIS (Geographic Information System) atau dalam bahasa Indonesia disebut SIG (Sistem Informasi &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://diian.org/blog/2012/10/14/gis-part-1-mengkonsumsi-data-tiles-dengan-leaflet">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Dian Aditya" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet" type="text/css">
+<!--- MathJax Configuration -->
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+<meta property="fb:app_id" content="279596272235062" />
+
+  
+
+</head>
+
+<body   class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Dian Aditya</a></h1>
+  
+    <h2>Penjahit Digital.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+  
+  
+  
+  
+<ul class="subscription">
+  <li><a href="https://github.com/dianw" rel="subscribe-github" title="@dianw on GitHub">GitHub</a></li>
+</ul>
+  
+  
+  
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:diian.org" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      
+        <h1 class="entry-title">GIS Part 1 - Mengkonsumsi Data Tiles Dengan Leaflet</h1>
+      
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Sesuai dengan prefix judul posting saya kali ini, GIS (Geographic Information System) atau dalam bahasa Indonesia disebut SIG (Sistem Informasi Geografis), saya akan membahas secara tuntas implementasi sederhana dari GIS dari awal hingga akhir. Ya, saya ulangi lagi, tuntas dari awal hingga akhir (jangan lupakan kata sederhana). Kasus yang akan saya jadikan contoh kali ini adalah pengolahan informasi lokasi berdasarkan koordinat, contoh paling populer dari kasus ini adalah Foursquare dan Google Latitude. Karena pembahasan kasus ini cukup panjang, saya akan membagi postingan ini menjadi 4 bab, diantaranya:</p>
+
+<ul>
+ <li><a href="http://blogs.mervpolis.com/roller/dwx/entry/gis_part_1_mengkonsumsi_data" target="_blank">Part 1 - Mengkonsumsi Data Tiles dengan Leaflet</a></li>
+ <li><a href="http://blogs.mervpolis.com/roller/dwx/entry/gis_part_2_pencarian_informasi" target="_blank">Part 2 - Pencarian Informasi Spasial menggunakan Hibernate Search/Lucene</a></li>
+ <li>Part 3 - Membuat REST API dengan S2Rest Plugin</li>
+ <li>Part 4 - Mengkonsumsi Informasi Spatial dengan Leaflet dan JQuery</li>
+</ul>
+
+
+<p>Lengkap bukan?</p>
+
+<h2>Mengkonsumsi Data Tiles dengan Leaflet</h2>
+
+<p> Tiles adalah ubin, lalu apa hubungannya ubin dengan peta? Analogi sederhananya adalah sebagai berikut, untuk melapisi dinding kamar mandi ataupun dapur di rumah anda, diperlukan kumpulan keramik berbentuk persegi yang ditempelkan secara rapi dalam susunan grid. Konsep inilah yang mendasari tiles pada peta, yaitu kumpulan bitmap berbentuk persegi yang disusun untuk membentuk sebuah peta.
+ Tiles secara umum adalah gambar berukuran 256 x 256 pixel, meskipun tidak selalu begitu, sebagai contoh CloudMade menyediakan gambar berukuran 64 x 64 pixel untuk kebutuhan mobile, namun secara keseluruhan gambar 256 x 256 pixel menjadi standart secara de facto yang dipimpin oleh Google Maps.
+ Dalam implementasinya banyak pustaka yang disediakan di internet untuk mengkonsumsi tiles. Untuk menampilakan ke dalam web umumnya pustaka dibangun diatas javascript, beberapa pustaka javascript yang populer digunakan adalah:</p>
+
+<ul>
+ <li style="text-align: justify; "><a href="https://developers.google.com/maps/" target="_blank">Google Maps API</a>. Sedikit catatan untuk penggunaan GMaps API, layanan ini bersifat komersial untuk kondisi tertentu. Google juga menentukan kebijakan dengan menyertakan iklan di dalamnya. Ingin menggunakan kode javascript GMaps pada local intranet? Sepertinya anda perlu membayar sekitar $10.000 per tahun untuk dapat melakukannya.</li>
+ <li style="text-align: justify; "><a href="http://openlayers.org/" target="_blank">Openlayers</a>, digunakan oleh <a href="http://www.openstreetmap.org/" target="_blank">OpenstreetMap</a>, kaya fitur, serta opensource. Akan tetapi cukup kompleks dan memiliki ukuran yang cukup besar untuk sebuah file javascript.</li>
+ <li style="text-align: justify; "><a href="http://leaflet.cloudmade.com/" target="_blank">Leaflet</a>, dikembangkan oleh CloudMade dibawah lisensi BSD. Cukup ringan, stabil dan cepat jika dibandingkan dengan Openlayers, serta desain kode berbasis OOP yang sangat mudah dipahami. Foursquare adalah salah satu website yang menggunakan Leaflet.</li>
+</ul>
+
+
+<p> Dalam contoh kali ini saya akan menggunakan leaflet sebagai pustaka untuk mengkonsumsi dan menampilkan data tiles dari Osmosa salah satu reimplementasi dari OpenstreetMap. Untuk menampilkan sebuah peta menggunakan leaflet adalah cukup mudah, berikut beberapa baris kode yang perlu ditulis untuk menampilkan sebuah peta dan menampilkan lokasi dimana anda berada.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'> <span class="kd">var</span> <span class="nx">map</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">L</span><span class="p">.</span><span class="nx">Map</span><span class="p">(</span><span class="s1">&#39;map&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nx">zoom</span><span class="o">:</span> <span class="mi">10</span><span class="p">});</span>
+</span><span class='line'> <span class="kd">var</span> <span class="nx">markers</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">L</span><span class="p">.</span><span class="nx">LayerGroup</span><span class="p">();</span>
+</span><span class='line'> <span class="nx">map</span><span class="p">.</span><span class="nx">addLayer</span><span class="p">(</span><span class="nx">markers</span><span class="p">);</span>
+</span><span class='line'> <span class="c1">// Mengambil tiles dari Osmosa.net</span>
+</span><span class='line'> <span class="kd">var</span> <span class="nx">tile</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">L</span><span class="p">.</span><span class="nx">TileLayer</span><span class="p">(</span><span class="s1">&#39;http://www.osmosa.net/osm_tiles3/{z}/{x}/{y}.png&#39;</span><span class="p">,</span> <span class="p">{</span>
+</span><span class='line'> <span class="nx">attribution</span><span class="o">:</span> <span class="s1">&#39;Tiles CC-BY-SA Osmosa, data © OpenStreetMap contributors.&#39;</span><span class="p">,</span>
+</span><span class='line'> <span class="nx">maxZoom</span><span class="o">:</span> <span class="mi">18</span><span class="p">,</span> <span class="nx">minZoom</span><span class="o">:</span> <span class="mi">3</span>
+</span><span class='line'> <span class="p">});</span>
+</span><span class='line'> <span class="nx">map</span><span class="p">.</span><span class="nx">addLayer</span><span class="p">(</span><span class="nx">tile</span><span class="p">);</span>
+</span><span class='line'> <span class="c1">// Mengambil posisi user, menampilkan titik dimana user berada</span>
+</span><span class='line'> <span class="nx">navigator</span><span class="p">.</span><span class="nx">geolocation</span><span class="p">.</span><span class="nx">getCurrentPosition</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'> <span class="nx">map</span><span class="p">.</span><span class="nx">setView</span><span class="p">(</span><span class="k">new</span> <span class="nx">L</span><span class="p">.</span><span class="nx">LatLng</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">coords</span><span class="p">.</span><span class="nx">latitude</span><span class="p">,</span> <span class="nx">p</span><span class="p">.</span><span class="nx">coords</span><span class="p">.</span><span class="nx">longitude</span><span class="p">),</span> <span class="mi">13</span><span class="p">);</span>
+</span><span class='line'> <span class="kd">var</span> <span class="nx">marker</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">L</span><span class="p">.</span><span class="nx">Marker</span><span class="p">([</span><span class="nx">p</span><span class="p">.</span><span class="nx">coords</span><span class="p">.</span><span class="nx">latitude</span><span class="p">,</span> <span class="nx">p</span><span class="p">.</span><span class="nx">coords</span><span class="p">.</span><span class="nx">longitude</span><span class="p">]);</span>
+</span><span class='line'> <span class="nx">marker</span><span class="p">.</span><span class="nx">addTo</span><span class="p">(</span><span class="nx">markers</span><span class="p">).</span><span class="nx">bindPopup</span><span class="p">(</span><span class="s1">&#39;Anda berada di sini!&#39;</span><span class="p">).</span><span class="nx">openPopup</span><span class="p">();</span>
+</span><span class='line'> <span class="p">});</span>
+</span><span class='line'><span class="p">})();</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Live Demo!</h3>
+
+<p><link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.4.4/leaflet.css"></p>
+
+<!--[if lte IE 8]>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.4.4/leaflet.ie.css" />
+<![endif]-->
+
+
+<script type="text/javascript" src="http://cdn.leafletjs.com/leaflet-0.4.4/leaflet.js"></script>
+
+
+<div class="well" style="min-height: 200px;" id="map"></div>
+
+
+<p>Browser anda mungkin akan meminta persetujuan karena contoh kode diatas mencoba melacak lokasi dimana anda berada, ijinkan untuk dapat melihat live demo. Jangan khawatir karena saya tidak akan menyimpan data lokasi atau apapun yang melanggar privasi anda.</p>
+
+<script type="text/javascript">
+(function() {
+    var map = new L.Map('map', {zoom: 10});
+    
+    var markers = new L.LayerGroup();
+    map.addLayer(markers);
+    
+//'http://www.osmosa.net/osm_tiles3/{z}/{x}/{y}.png'
+    var tile = new L.TileLayer('http://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: 'Tiles CC-BY-SA <a target="_blank" href="http://osmosa.net/">Osmosa</a>, data &copy; <a target="_blank" href="http://openstreetmap.org/">OpenStreetMap</a> contributors.',
+        maxZoom: 18, minZoom: 3
+    });
+    
+    map.addLayer(tile);
+            
+    navigator.geolocation.getCurrentPosition(function(p) {
+        map.setView(new L.LatLng(p.coords.latitude, p.coords.longitude), 13);
+        var marker = new L.Marker([p.coords.latitude, p.coords.longitude]);
+        marker.addTo(markers).bindPopup('Anda berada di sini!').openPopup();
+    });
+})();
+</script>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+
+
+  <span class="byline author vcard">Authored by <span class="fn">
+  
+    Dian Aditya
+  
+  </span></span>
+
+
+      
+
+
+
+
+
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://diian.org/blog/2012/10/14/gis-part-1-mengkonsumsi-data-tiles-dengan-leaflet/" data-via="" data-counturl="http://diian.org/blog/2012/10/14/gis-part-1-mengkonsumsi-data-tiles-dengan-leaflet/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+    <div class="fb-like" data-layout="button_count" data-send="false" data-width="300" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/07/27/menggunakan-method-post-get-put-delete-pada-html-form-tag-bisakah%3F/" title="Previous Post: Menggunakan method POST, GET, PUT, DELETE pada HTML form tag, bisakah?">&laquo; Menggunakan method POST, GET, PUT, DELETE pada HTML form tag, bisakah?</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2012/12/19/gis-part-2-pencarian-informasi-spasial-menggunakan-hibernate-search-lucene/" title="Next Post: GIS Part 2 - Pencarian Informasi Spasial menggunakan Hibernate Search/Lucene">GIS Part 2 - Pencarian Informasi Spasial menggunakan Hibernate Search/Lucene &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+
+
+  <section>
+    <h1>Comments</h1>
+    <div id="facebook_comments" aria-live="polite">
+      <noscript>Please enable JavaScript to view the comments powered by facebook</a></noscript>
+<div
+  class="fb-comments"
+  data-href="http://diian.org/blog/2012/10/14/gis-part-1-mengkonsumsi-data-tiles-dengan-leaflet/"
+  data-num-posts="5"
+  data-width="100%"></div>
+    </div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Dian Aditya -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> | Themed with <a href="https://github.com/lucaslew/whitespace">Whitespace</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=279596272235062&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

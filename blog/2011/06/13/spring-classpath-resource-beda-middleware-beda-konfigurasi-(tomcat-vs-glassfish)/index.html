@@ -1,0 +1,282 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Spring Classpath Resource, Beda Middleware Beda Konfigurasi (Tomcat vs Glassfish) - Dian Aditya</title>
+  <meta name="author" content="Dian Aditya">
+
+  
+  <meta name="description" content="Dua hari pusing mikirin session factory dari hibernate.cfg.xml yang gak kebaca di konfigurasi spring. Yap, baru-baru ini saya lagi sibuk jalanin &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://diian.org/blog/2011/06/13/spring-classpath-resource-beda-middleware-beda-konfigurasi-%28tomcat-vs-glassfish%29">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Dian Aditya" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet" type="text/css">
+<!--- MathJax Configuration -->
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+<meta property="fb:app_id" content="279596272235062" />
+
+  
+
+</head>
+
+<body   class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Dian Aditya</a></h1>
+  
+    <h2>Penjahit Digital.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+  
+  
+  
+  
+<ul class="subscription">
+  <li><a href="https://github.com/dianw" rel="subscribe-github" title="@dianw on GitHub">GitHub</a></li>
+</ul>
+  
+  
+  
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:diian.org" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      
+        <h1 class="entry-title">Spring Classpath Resource, Beda Middleware Beda Konfigurasi (Tomcat vs Glassfish)</h1>
+      
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Dua hari pusing mikirin session factory dari hibernate.cfg.xml yang gak kebaca di konfigurasi spring. Yap, baru-baru ini saya lagi sibuk jalanin cimande v2 di glassfish (yang alhamdulillah baru jalan lancar setelah dua hari). Ya memang kedengarannya payah, tapi mungkin bisa jadi ada juga yang memiliki nasib mirip seperti saya. Berawal dari kisah buruk itulah dengan hati tulus ikhlas saya berusaha agar teman-teman yang lain tidak mengalami kejadian yang mirip seperti yang saya alami tersebut.
+Jadi begini awal mula ceritanya, dari mulai kenal cimande sampai saya gede seperti ini belum pernah sekalipun saya coba jalanin ini aplikasi di container selain tomcat (sekarang sudah :D). Kemudian suatu hari muncullah titah dari Pak Bos untuk menjalankan cimande yang terdiri dari komposisi Struts2 + Spring + Hibernate di app server yang bernama Glassfish. 1, 2, 3, beberapa saat lancar-lancar aja (sampai muncul halaman login :P) dan akhirnya hal itupun terjadi. Masalah sederhana, gak mau login. Usut punya usut ternyata database tidak mengembalikan nilai yang diminta oleh client, usut punya usut lagi ternyata hibernate session factory yang diinject oleh spring bernilai kosong alias hibernate.cfg seakan tidak pernah dilahirkan. Anehnya di tomcat lancar-lancar saja, ya saya sadar kalo masalah beginian pasti saya yang salah.
+Berikut konfigurasi saya sebelumnya</p>
+
+<pre style="color:#000000;background:#fbfbfb;padding:5px;border:#cecece 1px solid;overflow:auto;"><span style=" color:#7f0055; background-color:#fbfbfb;">&lt;bean</span><span style=" color:#000000; background-color:#fbfbfb;"> id=</span><span style=" color:#2a00ff; background-color:#fbfbfb;">"sessionFactory"</span><span style=" color:#000000; background-color:#fbfbfb;">
+    class=</span><span style=" color:#2a00ff; background-color:#fbfbfb;">"org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean"</span><span style=" color:#000000; background-color:#fbfbfb;">
+    p:dataSource-ref=</span><span style=" color:#2a00ff; background-color:#fbfbfb;">"dataSource"</span><span style=" color:#000000; background-color:#fbfbfb;">
+    p:hibernateProperties=</span><span style=" color:#2a00ff; background-color:#fbfbfb;">"</span><span style=" color:#2a00ff; background-color:#fbfbfb;"><strong><u>classpath:hibernate.properties</u></strong></span><span style=" color:#2a00ff; background-color:#fbfbfb;">"</span><span style=" color:#7f0055; background-color:#fbfbfb;">&gt;</span><span style=" color:#000000; background-color:#fbfbfb;">
+    </span><span style=" color:#7f0055; background-color:#fbfbfb;">&lt;property</span><span style=" color:#000000; background-color:#fbfbfb;"> name=</span><span style=" color:#2a00ff; background-color:#fbfbfb;">"eventListeners"</span><span style=" color:#7f0055; background-color:#fbfbfb;">&gt;</span><span style=" color:#000000; background-color:#fbfbfb;">
+        </span><span style=" color:#7f0055; background-color:#fbfbfb;">&lt;map&gt;</span><span style=" color:#000000; background-color:#fbfbfb;">
+            </span><span style=" color:#7f0055; background-color:#fbfbfb;">&lt;entry</span><span style=" color:#000000; background-color:#fbfbfb;"> key=</span><span style=" color:#2a00ff; background-color:#fbfbfb;">"merge"</span><span style=" color:#7f0055; background-color:#fbfbfb;">&gt;</span><span style=" color:#000000; background-color:#fbfbfb;">
+                </span><span style=" color:#7f0055; background-color:#fbfbfb;">&lt;bean</span><span style=" color:#000000; background-color:#fbfbfb;">
+                    class=</span><span style=" color:#2a00ff; background-color:#fbfbfb;">"org.springframework.orm.hibernate3.support.IdTransferringMergeEventListener"</span><span style=" color:#000000; background-color:#fbfbfb;"> </span><span style=" color:#7f0055; background-color:#fbfbfb;">/&gt;</span><span style=" color:#000000; background-color:#fbfbfb;">
+            </span><span style=" color:#7f0055; background-color:#fbfbfb;">&lt;/entry&gt;</span><span style=" color:#000000; background-color:#fbfbfb;">
+        </span><span style=" color:#7f0055; background-color:#fbfbfb;">&lt;/map&gt;</span><span style=" color:#000000; background-color:#fbfbfb;">
+    </span><span style=" color:#7f0055; background-color:#fbfbfb;">&lt;/property&gt;</span><span style=" color:#000000; background-color:#fbfbfb;">
+    </span><span style=" color:#7f0055; background-color:#fbfbfb;">&lt;property</span><span style=" color:#000000; background-color:#fbfbfb;"> name=</span><span style=" color:#2a00ff; background-color:#fbfbfb;">"configLocations"</span><span style=" color:#7f0055; background-color:#fbfbfb;">&gt;</span><span style=" color:#000000; background-color:#fbfbfb;">
+        </span><span style=" color:#7f0055; background-color:#fbfbfb;">&lt;list&gt;</span><span style=" color:#000000; background-color:#fbfbfb;">
+            </span><span style=" color:#7f0055; background-color:#fbfbfb;">&lt;value&gt;</span><span style=" color:#000000; background-color:#fbfbfb;"><strong><u>classpath:hibernate*.xml</u></strong></span><span style=" color:#7f0055; background-color:#fbfbfb;">&lt;/value&gt;</span><span style=" color:#000000; background-color:#fbfbfb;">
+        </span><span style=" color:#7f0055; background-color:#fbfbfb;">&lt;/list&gt;</span><span style=" color:#000000; background-color:#fbfbfb;">
+    </span><span style=" color:#7f0055; background-color:#fbfbfb;">&lt;/property&gt;</span><span style=" color:#000000; background-color:#fbfbfb;">
+</span><span style=" color:#7f0055; background-color:#fbfbfb;">&lt;/bean&gt;</span><span style=" color:#000000; background-color:#fbfbfb;">
+</span></pre>
+
+
+<p>Yes, setelah bertapa beberapa hari akhirnya ketemulah biang errornya (coba tebak yang mana :P)
+Dan berikut ini konfigurasi setelah saya rubah.</p>
+
+<pre style="color:#000000;background:#fbfbfb;padding:5px;border:#cecece 1px solid;overflow:auto;"><span style=" color:#7f0055; background-color:#fbfbfb;">&lt;bean</span><span style=" color:#000000; background-color:#fbfbfb;"> id=</span><span style=" color:#2a00ff; background-color:#fbfbfb;">"sessionFactory"</span><span style=" color:#000000; background-color:#fbfbfb;">
+    class=</span><span style=" color:#2a00ff; background-color:#fbfbfb;">"org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean"</span><span style=" color:#000000; background-color:#fbfbfb;">
+    p:dataSource-ref=</span><span style=" color:#2a00ff; background-color:#fbfbfb;">"dataSource"</span><span style=" color:#000000; background-color:#fbfbfb;">
+    p:hibernateProperties=</span><span style=" color:#2a00ff; background-color:#fbfbfb;">"/WEB-INF/classes/</span><span style=" color:#2a00ff; background-color:#fbfbfb;"><strong><u>hibernate.properties</u></strong></span><span style=" color:#2a00ff; background-color:#fbfbfb;">"</span><span style=" color:#7f0055; background-color:#fbfbfb;">&gt;</span><span style=" color:#000000; background-color:#fbfbfb;">
+    </span><span style=" color:#7f0055; background-color:#fbfbfb;">&lt;property</span><span style=" color:#000000; background-color:#fbfbfb;"> name=</span><span style=" color:#2a00ff; background-color:#fbfbfb;">"eventListeners"</span><span style=" color:#7f0055; background-color:#fbfbfb;">&gt;</span><span style=" color:#000000; background-color:#fbfbfb;">
+        </span><span style=" color:#7f0055; background-color:#fbfbfb;">&lt;map&gt;</span><span style=" color:#000000; background-color:#fbfbfb;">
+            </span><span style=" color:#7f0055; background-color:#fbfbfb;">&lt;entry</span><span style=" color:#000000; background-color:#fbfbfb;"> key=</span><span style=" color:#2a00ff; background-color:#fbfbfb;">"merge"</span><span style=" color:#7f0055; background-color:#fbfbfb;">&gt;</span><span style=" color:#000000; background-color:#fbfbfb;">
+                </span><span style=" color:#7f0055; background-color:#fbfbfb;">&lt;bean</span><span style=" color:#000000; background-color:#fbfbfb;">
+                    class=</span><span style=" color:#2a00ff; background-color:#fbfbfb;">"org.springframework.orm.hibernate3.support.IdTransferringMergeEventListener"</span><span style=" color:#000000; background-color:#fbfbfb;"> </span><span style=" color:#7f0055; background-color:#fbfbfb;">/&gt;</span><span style=" color:#000000; background-color:#fbfbfb;">
+            </span><span style=" color:#7f0055; background-color:#fbfbfb;">&lt;/entry&gt;</span><span style=" color:#000000; background-color:#fbfbfb;">
+        </span><span style=" color:#7f0055; background-color:#fbfbfb;">&lt;/map&gt;</span><span style=" color:#000000; background-color:#fbfbfb;">
+    </span><span style=" color:#7f0055; background-color:#fbfbfb;">&lt;/property&gt;</span><span style=" color:#000000; background-color:#fbfbfb;">
+    </span><span style=" color:#7f0055; background-color:#fbfbfb;">&lt;property</span><span style=" color:#000000; background-color:#fbfbfb;"> name=</span><span style=" color:#2a00ff; background-color:#fbfbfb;">"configLocations"</span><span style=" color:#7f0055; background-color:#fbfbfb;">&gt;</span><span style=" color:#000000; background-color:#fbfbfb;">
+        </span><span style=" color:#7f0055; background-color:#fbfbfb;">&lt;list&gt;</span><span style=" color:#000000; background-color:#fbfbfb;">
+            </span><span style=" color:#7f0055; background-color:#fbfbfb;">&lt;value&gt;</span><span style=" color:#000000; background-color:#fbfbfb;"><strong><u>/WEB-INF/classes/hibernate*.xml</u></strong></span><span style=" color:#7f0055; background-color:#fbfbfb;">&lt;/value&gt;</span><span style=" color:#000000; background-color:#fbfbfb;">
+        </span><span style=" color:#7f0055; background-color:#fbfbfb;">&lt;/list&gt;</span><span style=" color:#000000; background-color:#fbfbfb;">
+    </span><span style=" color:#7f0055; background-color:#fbfbfb;">&lt;/property&gt;</span><span style=" color:#000000; background-color:#fbfbfb;">
+</span><span style=" color:#7f0055; background-color:#fbfbfb;">&lt;/bean&gt;</span><span style=" color:#000000; background-color:#fbfbfb;">
+</span></pre>
+
+
+<p>Setelah ditelusuri ternyata ketika dijalankan pada glassfish spring tidak mengenali classpathnya di sebelah mana, sehingga harus merujuk langsung ke tempat dimana semua file dicompile yaitu pada /WEB-INF/classes, dan walhasil cimande saya berhasil jalan di glassfish. Nah pertanyaan selanjutnya bagaimana jika saya menaruh file konfigurasinya di dalam jar file? Bagi yang bisa bantu ditunggu komennya di bawah tulisan ini. Semoga bermanfaat&hellip;</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+
+
+  <span class="byline author vcard">Authored by <span class="fn">
+  
+    Dian Aditya
+  
+  </span></span>
+
+
+      
+
+
+
+
+
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://diian.org/blog/2011/06/13/spring-classpath-resource-beda-middleware-beda-konfigurasi-%28tomcat-vs-glassfish%29/" data-via="" data-counturl="http://diian.org/blog/2011/06/13/spring-classpath-resource-beda-middleware-beda-konfigurasi-%28tomcat-vs-glassfish%29/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+    <div class="fb-like" data-layout="button_count" data-send="false" data-width="300" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2011/04/24/data-access-object-%28dao%29-dan-service-facade-pattern-apa-dan-mengapa/" title="Previous Post: Data Access Object (DAO) dan Service/Facade Pattern, Apa dan Mengapa">&laquo; Data Access Object (DAO) dan Service/Facade Pattern, Apa dan Mengapa</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2011/07/14/cimande-2.0-rc2-release/" title="Next Post: Cimande 2.0-RC2 Release">Cimande 2.0-RC2 Release &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+
+
+  <section>
+    <h1>Comments</h1>
+    <div id="facebook_comments" aria-live="polite">
+      <noscript>Please enable JavaScript to view the comments powered by facebook</a></noscript>
+<div
+  class="fb-comments"
+  data-href="http://diian.org/blog/2011/06/13/spring-classpath-resource-beda-middleware-beda-konfigurasi-%28tomcat-vs-glassfish%29/"
+  data-num-posts="5"
+  data-width="100%"></div>
+    </div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Dian Aditya -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> | Themed with <a href="https://github.com/lucaslew/whitespace">Whitespace</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=279596272235062&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

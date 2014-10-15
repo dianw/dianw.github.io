@@ -1,0 +1,414 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Kekuatan Dibalik Proxy Dalam Java - Dian Aditya</title>
+  <meta name="author" content="Dian Aditya">
+
+  
+  <meta name="description" content="Proxy sudah diperkenalkan sejak java 1.3, salah satu kekuatan (yang tidak tersembunyi) dari java yang sangat berguna dalam pembuatan aplikasi dengan &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://diian.org/blog/2012/04/15/kekuatan-dibalik-proxy-dalam-java">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Dian Aditya" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet" type="text/css">
+<!--- MathJax Configuration -->
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+<meta property="fb:app_id" content="279596272235062" />
+
+  
+
+</head>
+
+<body   class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Dian Aditya</a></h1>
+  
+    <h2>Penjahit Digital.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+  
+  
+  
+  
+<ul class="subscription">
+  <li><a href="https://github.com/dianw" rel="subscribe-github" title="@dianw on GitHub">GitHub</a></li>
+</ul>
+  
+  
+  
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:diian.org" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      
+        <h1 class="entry-title">Kekuatan Dibalik Proxy Dalam Java</h1>
+      
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Proxy sudah diperkenalkan sejak java 1.3, salah satu kekuatan (yang tidak tersembunyi) dari java yang sangat berguna dalam pembuatan aplikasi dengan tingkat modularitas tinggi.</p>
+
+<p>Sebelumnya kita ambil contoh dalam kehidupan coding sehari-hari, dengan atau tanpa disadari proxy ada dimana-mana seperti Spring yang mengimplementasikannya untuk AOP, Hibernate untuk lazy loading-nya, dan Google Guice dalam hal dependency Injection.</p>
+
+<p>Dalam Java, dynamic proxy adalah sebuah intance pengganti dari object sesungguhnya. Dengan proxy, pemanggilan sebuah method (method invocation) dapat dicegat (intercepted) sehingga kita dapat memasukkan cutom code sebelum ataupun setelah pemaggilan method. Sangat powerful bukan?</p>
+
+<p>Dalam penggunaannya, diluar dynamic proxy standart yang disediakan oleh JDK, banyak library yang menyediakan fitur proxy dalam penggunaannya, sebagai contoh Spring menyediakan JDK dynamic proxy dan CGLIB proxy bagi user untuk memilih salah satu. Begitu pula Hibernate yang menggunakan CGLIB untuk versi 3.x ke bawah yang kemudian berpindah menggunakan secara penuh Javassisst untuk menangani urusan proxy.
+Ada beberapa perbedaan antara JDK dynamic proxy dengan CGLIB serta Javassist, akan saya jelaskan sebagai berikut</p>
+
+<h3>JDK Dynamic Proxy</h3>
+
+<ul>
+<li>Proxy dibangun berdasarkan pada runtime interface, dengan kata lain proxy harus memiliki interface untuk dapat diciptakan.</li>
+<li>Karena proxy dipaksa untuk menjadi implementasi dari sudatu interface maka sudah dipastikan kita tidak bisa melakukan casting terhadap class lain.</li>
+<li>Object menjadi turunan dari <code>java.lang.reflect.Proxy</code></li>
+</ul>
+
+
+<p>Berikut contoh kode sedehananya, sebuah proxy yang akan menghalau setiap method bernama call dengan mengembalikan nilai null apapun nilainya.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">class</span> <span class="nc">DisableEveryCall</span> <span class="kd">implements</span> <span class="n">InvocationHandler</span> <span class="o">{</span>
+</span><span class='line'>  <span class="kd">private</span> <span class="n">Object</span> <span class="n">object</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">public</span> <span class="nf">DisableEveryCall</span><span class="o">(</span><span class="n">Object</span> <span class="n">object</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="o">.</span><span class="na">object</span> <span class="o">=</span> <span class="n">object</span><span class="o">;</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">public</span> <span class="n">Object</span> <span class="nf">invoke</span><span class="o">(</span><span class="n">Object</span> <span class="n">proxy</span><span class="o">,</span> <span class="n">Method</span> <span class="n">method</span><span class="o">,</span> <span class="n">Object</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Throwable</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="o">(</span><span class="n">method</span><span class="o">.</span><span class="na">getName</span><span class="o">().</span><span class="na">equalsIgnoreCase</span><span class="o">(</span><span class="s">&quot;call&quot;</span><span class="o">))</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">return</span> <span class="n">method</span><span class="o">.</span><span class="na">invoke</span><span class="o">(</span><span class="n">object</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Method invoke akan meng-intercept setiap method, dalam kasus ini hanya method dengan nama call yang akan mereturn null dengan apapun kondisinya. Kemudian berikut cara membuat proxy-nya.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">Callable</span> <span class="n">callable</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Callable</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>  <span class="kd">public</span> <span class="n">String</span> <span class="nf">call</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="s">&quot;Called!&quot;</span><span class="o">;</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">Proxy</span> <span class="n">proxy</span> <span class="o">=</span> <span class="o">(</span><span class="n">Proxy</span><span class="o">)</span> <span class="n">Proxy</span><span class="o">.</span><span class="na">newProxyInstance</span><span class="o">(</span><span class="n">Callable</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getClassLoader</span><span class="o">(),</span> <span class="k">new</span> <span class="n">Class</span><span class="o">[]</span> <span class="o">{</span> <span class="n">Callable</span><span class="o">.</span><span class="na">class</span> <span class="o">},</span> <span class="k">new</span> <span class="n">DisableEveryCall</span><span class="o">(</span><span class="n">callable</span><span class="o">));</span>
+</span><span class='line'><span class="n">callable</span> <span class="o">=</span> <span class="o">(</span><span class="n">Callable</span><span class="o">)</span> <span class="n">proxy</span><span class="o">;</span>
+</span><span class='line'><span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">callable</span><span class="o">.</span><span class="na">call</span><span class="o">());</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>CGLIB Proxy</h3>
+
+<ul>
+<li>Tidak mengharuskan interface.</li>
+<li>Proxy dibangun dengan cara mensub-classkan terhadap class sesungguhnya. Hal ini mengindikasikan bahwa class apapun yang digunakan dapat dimungkinkan untuk dijadikan proxy.</li>
+<li>CGLIB proxy bersifat final. Maka adalah sebuah hal sia-sia untuk memproxy sebuah proxy karena tidak akan berhasil.</li>
+</ul>
+
+
+<p>Mari membuat contoh yang agak berbeda, ketika kita memanggil method toString proxy akan mengembalikan dengan nilai null bagaimanapun caranya user melakukan override terhadap method tersebut.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">class</span> <span class="nc">DisableToString</span> <span class="kd">implements</span> <span class="n">MethodInterceptor</span> <span class="o">{</span>
+</span><span class='line'>  <span class="kd">public</span> <span class="n">Object</span> <span class="nf">intercept</span><span class="o">(</span><span class="n">Object</span> <span class="n">obj</span><span class="o">,</span> <span class="n">Method</span> <span class="n">method</span><span class="o">,</span> <span class="n">Object</span><span class="o">[]</span> <span class="n">args</span><span class="o">,</span> <span class="n">MethodProxy</span> <span class="n">proxy</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Throwable</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="s">&quot;toString&quot;</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">method</span><span class="o">.</span><span class="na">getName</span><span class="o">())</span> <span class="o">?</span> <span class="kc">null</span> <span class="o">:</span> <span class="n">proxy</span><span class="o">.</span><span class="na">invokeSuper</span><span class="o">(</span><span class="n">obj</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Pembuatan proxy dapat dilakukan dengan cara berikut</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">Enhancer</span> <span class="n">enhancer</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Enhancer</span><span class="o">();</span>
+</span><span class='line'><span class="n">enhancer</span><span class="o">.</span><span class="na">setSuperclass</span><span class="o">(</span><span class="n">Object</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'><span class="n">enhancer</span><span class="o">.</span><span class="na">setCallback</span><span class="o">(</span><span class="k">new</span> <span class="n">DisableToString</span><span class="o">());</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">Object</span> <span class="n">proxy</span> <span class="o">=</span> <span class="n">enhancer</span><span class="o">.</span><span class="na">create</span><span class="o">();</span>
+</span><span class='line'><span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">proxy</span><span class="o">.</span><span class="na">toString</span><span class="o">());</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Javassist Proxy</h3>
+
+<p>Tidak banyak perbedaan antara Javassist dengan CGLIB proxy, penjelasan tersebut dapat langsung saya ambil dari dokumentasi source-nya.</p>
+
+<blockquote><p>Package <code>javassist.util.proxy</code>
+Dynamic proxy (similar to Enhancer of cglib).</p></blockquote>
+
+<p>Perbedaan paling utama adalah kita tidak dapat menambahkan sebuah method baru kedalam Javassist proxy, sedangkan hal tersebut dimungkinkan pada CGLIB proxy. Serta fitur utama dari Javassist sendiri adalah bytecode manipulation library yang lebih mengedepankan manipulasi class pada saat compile-time bahkan mendefinisikan class baru pada saat run-time daripada memproxynya, sangat powerful dalam sisi lain tapi tidak dengan fitur proxy-nya. Berikut beberapa hal dalam Javassist proxy:</p>
+
+<ul>
+<li>Lebih lambat dari CGLIB proxy maupun JDK proxy (untuk saat ini)</li>
+</ul>
+
+
+<p>Agar mudah saya akan membuat contoh dengan pendekatan yang tidak jauh berbeda.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">class</span> <span class="nc">DisableToString</span> <span class="kd">implements</span> <span class="n">MethodHandler</span> <span class="o">{</span>
+</span><span class='line'>  <span class="kd">public</span> <span class="n">Object</span> <span class="nf">invoke</span><span class="o">(</span><span class="n">Object</span> <span class="n">self</span><span class="o">,</span> <span class="n">Method</span> <span class="n">thisMethod</span><span class="o">,</span> <span class="n">Method</span> <span class="n">proceed</span><span class="o">,</span> <span class="n">Object</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Throwable</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Langkah pembuatan proxy-nya pun hampir sama</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">ProxyFactory</span> <span class="n">factory</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ProxyFactory</span><span class="o">();</span>
+</span><span class='line'><span class="n">factory</span><span class="o">.</span><span class="na">setSuperclass</span><span class="o">(</span><span class="n">Object</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'><span class="n">factory</span><span class="o">.</span><span class="na">setFilter</span><span class="o">(</span><span class="k">new</span> <span class="n">MethodFilter</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>  <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">isHandled</span><span class="o">(</span><span class="n">Method</span> <span class="n">m</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="s">&quot;toString&quot;</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">m</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">Proxy</span> <span class="n">proxy</span> <span class="o">=</span> <span class="o">(</span><span class="n">javassist</span><span class="o">.</span><span class="na">util</span><span class="o">.</span><span class="na">proxy</span><span class="o">.</span><span class="na">Proxy</span><span class="o">)</span> <span class="n">factory</span><span class="o">.</span><span class="na">createClass</span><span class="o">().</span><span class="na">newInstance</span><span class="o">();</span>
+</span><span class='line'><span class="n">proxy</span><span class="o">.</span><span class="na">setHandler</span><span class="o">(</span><span class="k">new</span> <span class="n">DisableToString</span><span class="o">());</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">Object</span> <span class="n">object</span> <span class="o">=</span> <span class="n">proxy</span><span class="o">;</span>
+</span><span class='line'><span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">object</span><span class="o">.</span><span class="na">toString</span><span class="o">());</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Kesimpulan</h2>
+
+<p>Java memiliki banyak fitur menarik, salah satunya adalah dynamic proxy. Spring transaction manager dan Hibernate lazy loading mungkin adalah contoh yang paling mudah untuk memahami bagaimana proxy bekerja untuk meng-intercept sebuah method. Banyak pula library pembantu di luar sana yang menyediakan fitur proxy dengan berbagai keunggulan masing-masing.</p>
+
+<p>Enjoy.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+
+
+  <span class="byline author vcard">Authored by <span class="fn">
+  
+    Dian Aditya
+  
+  </span></span>
+
+
+      
+
+
+
+
+
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://diian.org/blog/2012/04/15/kekuatan-dibalik-proxy-dalam-java/" data-via="" data-counturl="http://diian.org/blog/2012/04/15/kekuatan-dibalik-proxy-dalam-java/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+    <div class="fb-like" data-layout="button_count" data-send="false" data-width="300" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/02/11/geliat-cloud-2012-tahunnya-paas%3F/" title="Previous Post: Geliat Cloud 2012, Tahunnya PaaS?">&laquo; Geliat Cloud 2012, Tahunnya PaaS?</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2012/06/12/mengimplementasikan-clean-url-parameter-dengan-inca-s2rest-plugin/" title="Next Post: Mengimplementasikan Clean URL Parameter dengan Inca S2Rest Plugin">Mengimplementasikan Clean URL Parameter dengan Inca S2Rest Plugin &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+
+
+  <section>
+    <h1>Comments</h1>
+    <div id="facebook_comments" aria-live="polite">
+      <noscript>Please enable JavaScript to view the comments powered by facebook</a></noscript>
+<div
+  class="fb-comments"
+  data-href="http://diian.org/blog/2012/04/15/kekuatan-dibalik-proxy-dalam-java/"
+  data-num-posts="5"
+  data-width="100%"></div>
+    </div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Dian Aditya -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> | Themed with <a href="https://github.com/lucaslew/whitespace">Whitespace</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=279596272235062&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
