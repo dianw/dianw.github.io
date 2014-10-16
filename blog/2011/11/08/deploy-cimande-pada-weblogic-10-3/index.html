@@ -1,0 +1,561 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Deploy Cimande Pada Weblogic 10.3 - Dian Aditya</title>
+  <meta name="author" content="Dian Aditya">
+
+  
+  <meta name="description" content="Baru hangat-hangat nih, berbarengan dengan Release Blueoxygen Cimande versi 2.0, ada request untuk menjalankannya pada Weblogic Middleware versi 10.3 &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://diian.org/blog/2011/11/08/deploy-cimande-pada-weblogic-10-3">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Dian Aditya" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet" type="text/css">
+<!--- MathJax Configuration -->
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+<meta property="fb:app_id" content="279596272235062" />
+
+  
+
+</head>
+
+<body   class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Dian Aditya</a></h1>
+  
+    <h2>Penjahit Digital.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+  
+  
+  
+  
+<ul class="subscription">
+  <li><a href="https://github.com/dianw" rel="subscribe-github" title="@dianw on GitHub">GitHub</a></li>
+</ul>
+  
+  
+  
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:diian.org" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      
+        <h1 class="entry-title">Deploy Cimande Pada Weblogic 10.3</h1>
+      
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Baru hangat-hangat nih, berbarengan dengan Release Blueoxygen Cimande versi 2.0, ada request untuk menjalankannya pada Weblogic Middleware versi 10.3. Semula saya pikir gak akan jauh beda dengan server-server enterprise lain yang pernah saya coba seperti Glassfish (saja). Dengan bermodal pede (tempe kedele) saya coba jalankan dengan menggunakan Cargo Maven Plugin dengan menambahkan konfigurasi seperti ini:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;plugin&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;groupid&gt;</span>org.codehaus.cargo<span class="nt">&lt;/groupid&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;artifactid&gt;</span>cargo-maven2-plugin<span class="nt">&lt;/artifactid&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;version&gt;</span>1.1.3<span class="nt">&lt;/version&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;configuration&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;container&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;containerid&gt;</span>weblogic103x<span class="nt">&lt;/containerid&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;home&gt;</span>/home/dian/Oracle/Middleware/wlserver_10.3/<span class="nt">&lt;/home&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/container&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;cargo.protocol&gt;</span>http<span class="nt">&lt;/cargo.protocol&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;cargo.hostname&gt;</span>localhost<span class="nt">&lt;/cargo.hostname&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;cargo.servlet.port&gt;</span>7001<span class="nt">&lt;/cargo.servlet.port&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;cargo.weblogic.administrator.user&gt;</span>default<span class="nt">&lt;/cargo.weblogic.administrator.user&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;cargo.weblogic.administrator.password&gt;</span>guecakep<span class="nt">&lt;/cargo.weblogic.administrator.password&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;context&gt;</span>cimande<span class="nt">&lt;/context&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/configuration&gt;</span>
+</span><span class='line'><span class="nt">&lt;/plugin&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Dan benar ketika saya jalankan dengan perintah clean verify cargo:run, mantra yang tidak diharapkan muncul</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Caused By: java.lang.ClassNotFoundException: org.apache.struts2.views.JspSupportServlet
+</span><span class='line'>   at weblogic.utils.classloaders.GenericClassLoader.findLocalClass(GenericClassLoader.java:297)
+</span><span class='line'>   at weblogic.utils.classloaders.GenericClassLoader.findClass(GenericClassLoader.java:270)
+</span><span class='line'>   at weblogic.utils.classloaders.ChangeAwareClassLoader.findClass(ChangeAwareClassLoader.java:64)
+</span><span class='line'>   at java.lang.ClassLoader.loadClass(ClassLoader.java:307)
+</span><span class='line'>   at java.lang.ClassLoader.loadClass(ClassLoader.java:248)
+</span><span class='line'>   at weblogic.utils.classloaders.GenericClassLoader.loadClass(GenericClassLoader.java:179)
+</span><span class='line'>   ...</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Yap, class yang diinginkan tidak ditemukan, dan ajaibnya seluruh library yang dibutuhkan (termasuk struts2-core-2.x.jar dimana terdapat class (org.apache.struts2.views.JspSupportServlet) sudah ada di folder webapp library (WEB-INF/lib) di dalam WAR yang telah dicompile. Googling punya googling ada sedikit pencerahan, dimana seluruh library yang dibutuhkan oleh webapp harus diletakkan di root EAR project. Ya benar, agak aneh, ada pemaksaan untuk menjadikan project saya menjadi enterprise archive, walaupun didalamnya tidak ada EJB-nya. Sehingga untuk struktur maven-nya pun berubah menjadi seperti ini.</p>
+
+<p>Ada satu parent project yang memiliki 2 module yaitu berupa webapp (dengan packaging WAR) dan ear (dengan packaging EAR).</p>
+
+<p>Karena semua library akan diletakkan pada EAR maka untuk menghindari duplikasi file jar, maka ada sedikit perubahan scope cimande-core pada webapp dari compile menjadi provided, artinya library tidak akan ikut disertakan ketika webapp di package menjadi WAR.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;dependency&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;groupid&gt;</span>org.blueoxygen.cimande<span class="nt">&lt;/groupid&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;artifactid&gt;</span>cimande-core<span class="nt">&lt;/artifactid&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;version&gt;</span>${cimande.sdk.version}<span class="nt">&lt;/version&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;scope&gt;</span>provided<span class="nt">&lt;/scope&gt;</span>
+</span><span class='line'><span class="nt">&lt;/dependency&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Berikut isi dari konfigurasi pom.xml pada parent project</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+</span><span class='line'><span class="nt">&lt;project</span> <span class="na">xmlns=</span><span class="s">&quot;http://maven.apache.org/POM/4.0.0&quot;</span> <span class="na">xmlns:xsi=</span><span class="s">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span>
+</span><span class='line'>    <span class="na">xsi:schemaLocation=</span><span class="s">&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;modelVersion&gt;</span>4.0.0<span class="nt">&lt;/modelVersion&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;groupId&gt;</span>org.blueoxygen.cimande<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;version&gt;</span>1.0<span class="nt">&lt;/version&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;artifactId&gt;</span>cimande-enterprise-parent<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;packaging&gt;</span>pom<span class="nt">&lt;/packaging&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;name&gt;</span>Cimande Enterprise Parent<span class="nt">&lt;/name&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;properties&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;cimande.sdk.version&gt;</span>2.0<span class="nt">&lt;/cimande.sdk.version&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/properties&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;modules&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;module&gt;</span>ear<span class="nt">&lt;/module&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;module&gt;</span>webapp<span class="nt">&lt;/module&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/modules&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;build&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;pluginManagement&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;plugins&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;plugin&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;artifactId&gt;</span>maven-site-plugin<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;configuration&gt;</span>
+</span><span class='line'>                        <span class="nt">&lt;unzipCommand&gt;</span>/usr/bin/unzip -o &gt; err.txt<span class="nt">&lt;/unzipCommand&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;/configuration&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/plugin&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;/plugins&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/pluginManagement&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/build&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;dependencies&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;dependency&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;groupId&gt;</span>org.blueoxygen.cimande<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;artifactId&gt;</span>cimande-core<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;version&gt;</span>${cimande.sdk.version}<span class="nt">&lt;/version&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/dependency&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/dependencies&gt;</span>
+</span><span class='line'><span class="nt">&lt;/project&gt;</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Dan Cargo Maven Plugin untuk menjalankan Weblogic saya letakkan pada pom.xml module ear, untuk mendeploy aplikasi dalam bentuk EAR.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;project&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;modelVersion&gt;</span>4.0.0<span class="nt">&lt;/modelVersion&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;groupId&gt;</span>org.blueoxygen.cimande<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;artifactId&gt;</span>cimande-enterprise<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;packaging&gt;</span>ear<span class="nt">&lt;/packaging&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;version&gt;</span>1.0<span class="nt">&lt;/version&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;name&gt;</span>Cimande Enterprise<span class="nt">&lt;/name&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;parent&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;groupId&gt;</span>org.blueoxygen.cimande<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;artifactId&gt;</span>cimande-enterprise-parent<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;version&gt;</span>1.0<span class="nt">&lt;/version&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/parent&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;dependencies&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;dependency&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;groupId&gt;</span>org.blueoxygen.cimande<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;artifactId&gt;</span>cimande-webapp<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;version&gt;</span>1.0<span class="nt">&lt;/version&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;type&gt;</span>war<span class="nt">&lt;/type&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/dependency&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/dependencies&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;build&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;plugins&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;plugin&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;artifactId&gt;</span>maven-ear-plugin<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;configuration&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;generateApplicationXml&gt;</span>true<span class="nt">&lt;/generateApplicationXml&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;defaultLibBundleDir&gt;</span>lib/<span class="nt">&lt;/defaultLibBundleDir&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;archive&gt;</span>
+</span><span class='line'>                        <span class="nt">&lt;manifest&gt;</span>
+</span><span class='line'>                            <span class="nt">&lt;addClasspath&gt;</span>true<span class="nt">&lt;/addClasspath&gt;</span>
+</span><span class='line'>                        <span class="nt">&lt;/manifest&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;/archive&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/configuration&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;/plugin&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;plugin&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;groupId&gt;</span>org.codehaus.cargo<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;artifactId&gt;</span>cargo-maven2-plugin<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;version&gt;</span>1.1.3<span class="nt">&lt;/version&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;configuration&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;container&gt;</span>
+</span><span class='line'>                        <span class="nt">&lt;containerId&gt;</span>weblogic103x<span class="nt">&lt;/containerId&gt;</span>
+</span><span class='line'>                        <span class="nt">&lt;home&gt;</span>/home/dian/Oracle/Middleware/wlserver_10.3/<span class="nt">&lt;/home&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;/container&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;cargo.protocol&gt;</span>http<span class="nt">&lt;/cargo.protocol&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;cargo.hostname&gt;</span>localhost<span class="nt">&lt;/cargo.hostname&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;cargo.servlet.port&gt;</span>7001<span class="nt">&lt;/cargo.servlet.port&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;cargo.weblogic.administrator.user&gt;</span>default<span class="nt">&lt;/cargo.weblogic.administrator.user&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;cargo.weblogic.administrator.password&gt;</span>tulalit13<span class="nt">&lt;/cargo.weblogic.administrator.password&gt;</span>
+</span><span class='line'>                    <span class="nt">&lt;context&gt;</span>cimande<span class="nt">&lt;/context&gt;</span>
+</span><span class='line'>                <span class="nt">&lt;/configuration&gt;</span>
+</span><span class='line'>            <span class="nt">&lt;/plugin&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;/plugins&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/build&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;properties&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;cimande.sdk.version&gt;</span>2.0<span class="nt">&lt;/cimande.sdk.version&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/properties&gt;</span>
+</span><span class='line'><span class="nt">&lt;/project&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Tak lupa yang terakhir (juga hasil googling) buat file weblogic-application.xml pada direktori {ear.home}/src/main/application/META-INF/, yang merupakan file deployment descriptor spesifik Weblogic server untuk application.xml dari Sun Microsystem. Dalam file ini konfigurasi yang dibutuhkan seperti shared library dideskripsikan.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="c">&lt;!--?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?--&gt;</span>
+</span><span class='line'><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+</span><span class='line'><span class="nt">&lt;weblogic-application</span>
+</span><span class='line'>    <span class="na">xmlns=</span><span class="s">&quot;http://www.bea.com/ns/weblogic/weblogic-application&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;application-param&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;param-name&gt;</span>webapp.encoding.default<span class="nt">&lt;/param-name&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;param-value&gt;</span>UTF-8<span class="nt">&lt;/param-value&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/application-param&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;prefer-application-packages&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;package-name&gt;</span>antlr.*<span class="nt">&lt;/package-name&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;package-name&gt;</span>javax.persistence.*<span class="nt">&lt;/package-name&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;package-name&gt;</span>org.apache.commons.*<span class="nt">&lt;/package-name&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;package-name&gt;</span>org.springframework.*<span class="nt">&lt;/package-name&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;package-name&gt;</span>org.hibernate.*<span class="nt">&lt;/package-name&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/prefer-application-packages&gt;</span>
+</span><span class='line'><span class="nt">&lt;/weblogic-application&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Dan akhirnya setelah semua mantra yang dituliskan diatas dijalankan satu per satu secara berurutan, maka tibalah saat-saat yang mendebarkan yaitu menjalankan aplikasi. Berikut langkah-langkah untuk menjalankannya.</p>
+
+<ul>
+<li>Masuk ke dalam direktori parent-project, kemudian masukkan perintah <code>mvn clean install</code> untuk menginstal ear dan webapp pada repository lokal.</li>
+<li>Masuk ke dalam direktori ear kemudian jalankan perintah <code>mvn cargo:run</code></li>
+<li>Muka browser, pada contoh konfigurasi diatas Cimande dapat diakses melalui <a href="http://localhost:7001/cimande-webapp">http://localhost:7001/cimande-webapp</a></li>
+</ul>
+
+
+<p>Dan akhirnya dengan modal pede + googling saya berhasil menjalankan BlueOxygen Cimande pada Weblogic Server.</p>
+
+<p>NB: mengingat konfigurasi diatas cukup rumit, tim developer saat ini sedang mempersiapkan Maven archetype untuk mempermudah user mengembangkan Cimande project diatas Weblogic dengan cukup menggenerate archetype yang akan segera tersedia di maven central.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+
+
+  <span class="byline author vcard">Authored by <span class="fn">
+  
+    Dian Aditya
+  
+  </span></span>
+
+
+      
+
+
+
+
+
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://diian.org/blog/2011/11/08/deploy-cimande-pada-weblogic-10-3/" data-via="" data-counturl="http://diian.org/blog/2011/11/08/deploy-cimande-pada-weblogic-10-3/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+    <div class="fb-like" data-layout="button_count" data-send="false" data-width="300" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2011/10/07/menginstall-maven-3-pada-ubuntu/" title="Previous Post: Menginstall Maven 3 pada Ubuntu">&laquo; Menginstall Maven 3 pada Ubuntu</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2011/11/12/criteria-query-hibernate-dan-jpa-2-0-jpa2-part-1/" title="Next Post: Criteria Query, Hibernate dan JPA 2.0 (JPA2 part 1)">Criteria Query, Hibernate dan JPA 2.0 (JPA2 part 1) &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+
+
+  <section>
+    <h1>Comments</h1>
+    <div id="facebook_comments" aria-live="polite">
+      <noscript>Please enable JavaScript to view the comments powered by facebook</a></noscript>
+<div
+  class="fb-comments"
+  data-href="http://diian.org/blog/2011/11/08/deploy-cimande-pada-weblogic-10-3/"
+  data-num-posts="5"
+  data-width="100%"></div>
+    </div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Dian Aditya -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> | Themed with <a href="https://github.com/lucaslew/whitespace">Whitespace</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=279596272235062&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

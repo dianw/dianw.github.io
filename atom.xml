@@ -4,7 +4,7 @@
   <title><![CDATA[Dian Aditya]]></title>
   <link href="http://diian.org/atom.xml" rel="self"/>
   <link href="http://diian.org/"/>
-  <updated>2014-10-16T00:31:15+07:00</updated>
+  <updated>2014-10-17T01:18:05+07:00</updated>
   <id>http://diian.org/</id>
   <author>
     <name><![CDATA[Dian Aditya]]></name>
@@ -12,6 +12,15 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[GIS Part 3 - Membuat REST API Dengan S2Rest Plugin]]></title>
+    <link href="http://diian.org/blog/2014/10/17/gis-part-3-membuat-rest-api-dengan-s2rest-plugin/"/>
+    <updated>2014-10-17T01:04:15+07:00</updated>
+    <id>http://diian.org/blog/2014/10/17/gis-part-3-membuat-rest-api-dengan-s2rest-plugin</id>
+    <content type="html"><![CDATA[
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[GIS Part 2 - Pencarian Informasi Spasial Menggunakan Hibernate Search/Lucene]]></title>
@@ -346,9 +355,9 @@ Method diatas akan mencari instance (Location) yang berada di dalam radius dari 
   
   <entry>
     <title type="html"><![CDATA[Menggunakan Method POST, GET, PUT, DELETE Pada HTML Form Tag, Bisakah?]]></title>
-    <link href="http://diian.org/blog/2012/07/27/menggunakan-method-post-get-put-delete-pada-html-form-tag-bisakah%3F/"/>
+    <link href="http://diian.org/blog/2012/07/27/menggunakan-method-post-get-put-delete-pada-html-form-tag-bisakah/"/>
     <updated>2012-07-27T00:00:00+07:00</updated>
-    <id>http://diian.org/blog/2012/07/27/menggunakan-method-post-get-put-delete-pada-html-form-tag-bisakah?</id>
+    <id>http://diian.org/blog/2012/07/27/menggunakan-method-post-get-put-delete-pada-html-form-tag-bisakah</id>
     <content type="html"><![CDATA[<p>Pernahkah anda menggunakan menggunakan http method selain <code>GET</code> dan <code>POST</code> pada browser. Yah, tentunya hanya hanya client seperti apache http client yang mensupport http request method seperti <code>PUT</code>, <code>DELETE</code>, ataupun <code>OPTION</code>. Sebenarnya saat ini hampir seluruh browser sudah dapat mengirimkan request dengan menggunakan http method tersebut melalui <code>XMLHttpRequest</code>, yap kuncinya ada di AJAX. Lalu bagaimana dengan html form tag?</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -497,9 +506,9 @@ Method diatas akan mencari instance (Location) yang berada di dalam radius dari 
   
   <entry>
     <title type="html"><![CDATA[Pakai Application Server Yang Mana? (Ala Saya)]]></title>
-    <link href="http://diian.org/blog/2012/06/28/pakai-application-server-yang-mana%3F-%28ala-saya%29/"/>
+    <link href="http://diian.org/blog/2012/06/28/pakai-application-server-yang-mana-ala-saya/"/>
     <updated>2012-06-28T00:00:00+07:00</updated>
-    <id>http://diian.org/blog/2012/06/28/pakai-application-server-yang-mana?-(ala-saya)</id>
+    <id>http://diian.org/blog/2012/06/28/pakai-application-server-yang-mana-ala-saya</id>
     <content type="html"><![CDATA[<p>Setelah sekian abad tidak melihat kalender, baru sadar ini umur ternyata dah nambah banyak. Eeeaaaa, tidak terasa sudah dua tahun lebih saya terlibat dari satu projek ke projek, bergelantungan mondar-mandir. Yah tentunya sudah lumayan juga jumlah aplikasi yang telah terdeploy ke berbagai tempat dengan beragam jenis application server. Mulai dari aplikasi yang mengharuskan berjalan diatas JavaEE container hingga stack yang diluar standart JEE seperti Cimande dengan Struts2-Spring-Hibernate yang pastinya bisa jalan di application server manapun (dengan tambahan telaten dan istiqomah untuk beberapa spesifik application server).</p>
 
 <p>Yang akan saya bahas kali ini adalah beberapa pertimbangan (pribadi) tentang bagaimana memilih application server yang tepat untuk digunakan pada fase production. Sebagai permulaan ada 2 jenis kelompok besar dalam aplication server, kelompok pertama adalah full-blown Java EE container, sedangkan kelompompok ke-dua adalah servlet container. Kelompok pertama adalah dihuni oleh app server yang mendukung spesifikasi Java EE seperti EJB, JMS, JSF, dll, beberapa anggota kelompok ini adalah Glassfish, JBoss AS, Weblogic, Websphere, dan masih banyak lagi. Sedangkan kelompok ke-dua adalah app server yang tidak mendukung secara penuh spesifikasi JEE seperti Tomcat dan Jetty. Sudah dapat gambaran tentang dua kelompok besar tersebut? Oke, sekarang saya akan pilah-pilah sesuai dengan kemampuan masing-masih application server.</p>
@@ -818,9 +827,9 @@ Dynamic proxy (similar to Enhancer of cglib).</p></blockquote>
   
   <entry>
     <title type="html"><![CDATA[Geliat Cloud 2012, Tahunnya PaaS?]]></title>
-    <link href="http://diian.org/blog/2012/02/11/geliat-cloud-2012-tahunnya-paas%3F/"/>
+    <link href="http://diian.org/blog/2012/02/11/geliat-cloud-2012-tahunnya-paas/"/>
     <updated>2012-02-11T00:00:00+07:00</updated>
-    <id>http://diian.org/blog/2012/02/11/geliat-cloud-2012-tahunnya-paas?</id>
+    <id>http://diian.org/blog/2012/02/11/geliat-cloud-2012-tahunnya-paas</id>
     <content type="html"><![CDATA[<p><img src="https://lh4.googleusercontent.com/-ar9VGb8Qb9g/TzVrRIW6EsI/AAAAAAAAAXk/FFw5RKh-NGE/s800/cumulonimbus.jpg" title="Cloud" width="300" /></p>
 
 <p>Bicara soal 2012 kembali kita dihadapkan pada topik paling hot di dunia, pasti gak akan jauh-jauh dari isu akhir dari peradaban manusia. Yah, mungkin saya akan berkata hal serupa juga andaikan saat ini saya adalah pengguna smarphone nokia, hehehe&hellip; Lupakan.</p>
@@ -915,9 +924,9 @@ Software: Siswa selalu update, jaman semakin berkembang, tidak salah kalau prese
   
   <entry>
     <title type="html"><![CDATA[Criteria Query, Hibernate Dan JPA 2.0 (JPA2 Part 1)]]></title>
-    <link href="http://diian.org/blog/2011/11/12/criteria-query-hibernate-dan-jpa-2.0-%28jpa2-part-1%29/"/>
+    <link href="http://diian.org/blog/2011/11/12/criteria-query-hibernate-dan-jpa-2-0-jpa2-part-1/"/>
     <updated>2011-11-12T00:00:00+07:00</updated>
-    <id>http://diian.org/blog/2011/11/12/criteria-query-hibernate-dan-jpa-2.0-(jpa2-part-1)</id>
+    <id>http://diian.org/blog/2011/11/12/criteria-query-hibernate-dan-jpa-2-0-jpa2-part-1</id>
     <content type="html"><![CDATA[<p>Salah satu tambahan terbesar dari spesifikasi JPA (Java Persistence API) versi 2.0 adalah criteria query. Dirilis pada Desember 2009, JPA 2.0 menyediakan API baru yang memungkinkan penggunaan criteria query, meskipun kita tahu pada framework ORM seperti Hibernate sudah terlebih dahulu menyediakan criteria query sejak versi 3.0. Hmm, bagaimanapun JPA adalah spesifikasi standard untuk Persistence yang mana dengan JPA kita bisa memilih JPA provider seperti Hibernate, EclipseLink, OpenJPA, DataNucleus, ataupun ObjectDB sesuka hati tanpa perlu mengganti banyak konfigurasi karena seluruh abstraksi ada di bawah package javax.persistence.*</p>
 
 <p>Pada postingan kali ini saya akan mengulas tentang penggunaan Criteria Query pada JPA (dengan Hibernate sebagai persistence provider) dan Qriteria Query pada Hibernate (native).</p>
@@ -1022,9 +1031,9 @@ Software: Siswa selalu update, jaman semakin berkembang, tidak salah kalau prese
   
   <entry>
     <title type="html"><![CDATA[Deploy Cimande Pada Weblogic 10.3]]></title>
-    <link href="http://diian.org/blog/2011/11/08/deploy-cimande-pada-weblogic-10.3/"/>
+    <link href="http://diian.org/blog/2011/11/08/deploy-cimande-pada-weblogic-10-3/"/>
     <updated>2011-11-08T00:00:00+07:00</updated>
-    <id>http://diian.org/blog/2011/11/08/deploy-cimande-pada-weblogic-10.3</id>
+    <id>http://diian.org/blog/2011/11/08/deploy-cimande-pada-weblogic-10-3</id>
     <content type="html"><![CDATA[<p>Baru hangat-hangat nih, berbarengan dengan Release Blueoxygen Cimande versi 2.0, ada request untuk menjalankannya pada Weblogic Middleware versi 10.3. Semula saya pikir gak akan jauh beda dengan server-server enterprise lain yang pernah saya coba seperti Glassfish (saja). Dengan bermodal pede (tempe kedele) saya coba jalankan dengan menggunakan Cargo Maven Plugin dengan menambahkan konfigurasi seperti ini:</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -1414,9 +1423,9 @@ OS name: "linux", version: "2.6.32-33-generic", arch: "i386", family: "unix"
   
   <entry>
     <title type="html"><![CDATA[Cimande 2.0-RC2 Release]]></title>
-    <link href="http://diian.org/blog/2011/07/14/cimande-2.0-rc2-release/"/>
+    <link href="http://diian.org/blog/2011/07/14/cimande-2-0-rc2-release/"/>
     <updated>2011-07-14T00:00:00+07:00</updated>
-    <id>http://diian.org/blog/2011/07/14/cimande-2.0-rc2-release</id>
+    <id>http://diian.org/blog/2011/07/14/cimande-2-0-rc2-release</id>
     <content type="html"><![CDATA[<p>Hampir tidak terasa sudah satu tahun sejak rencana major release BlueOxygen Workspace (Cimande) versi 2.0 dicetuskan dengan mengusung konsep Representational State Transfer (ReST). Diawali dengan lahirnya versi Release Candidate 1 (RC1) akhir tahun lalu, yang juga merupakan awal dari dimulainya mobilisasi terhadap beberapa produk BlueOxygen yang secara keseluruhan berjalan diatas platform Cimande. Dengan dukungan multiple representational yang masih dan terus disempurnakan hingga saat ini diharapkan dalam major release mendatang Blueoxygen Workspace benar-benar menjadi platform yang ramah akan perangkat mobile, baik itu mobile web maupun native (Android, iPhone, Blackberry, dll).
 Prototype Cimande versi tablet dengan jQuery Mobile SplitView
 Berbeda dengan versi sebelumnya, banyak hal spesial yang terjadi dalam pengembangan RC2 ini yang membuat waktu release sempat mundur dari jadwal yang sudah direncanakan. Sedikit bocoran, banyak diantaranya yang belum dituliskan pada roadmap dan tiba-tiba ada pada RC2 ini. Secara teknis, berikut beberapa perubahan dan fitur terbaru yang telah ditambahkan :
@@ -1436,9 +1445,9 @@ Hal yang tak pernah lupa untuk disebutkan, BlueOxygen Cimande merupakan produk O
   
   <entry>
     <title type="html"><![CDATA[Spring Classpath Resource, Beda Middleware Beda Konfigurasi (Tomcat vs Glassfish)]]></title>
-    <link href="http://diian.org/blog/2011/06/13/spring-classpath-resource-beda-middleware-beda-konfigurasi-%28tomcat-vs-glassfish%29/"/>
+    <link href="http://diian.org/blog/2011/06/13/spring-classpath-resource-beda-middleware-beda-konfigurasi-tomcat-vs-glassfish/"/>
     <updated>2011-06-13T00:00:00+07:00</updated>
-    <id>http://diian.org/blog/2011/06/13/spring-classpath-resource-beda-middleware-beda-konfigurasi-(tomcat-vs-glassfish)</id>
+    <id>http://diian.org/blog/2011/06/13/spring-classpath-resource-beda-middleware-beda-konfigurasi-tomcat-vs-glassfish</id>
     <content type="html"><![CDATA[<p>Dua hari pusing mikirin session factory dari hibernate.cfg.xml yang gak kebaca di konfigurasi spring. Yap, baru-baru ini saya lagi sibuk jalanin cimande v2 di glassfish (yang alhamdulillah baru jalan lancar setelah dua hari). Ya memang kedengarannya payah, tapi mungkin bisa jadi ada juga yang memiliki nasib mirip seperti saya. Berawal dari kisah buruk itulah dengan hati tulus ikhlas saya berusaha agar teman-teman yang lain tidak mengalami kejadian yang mirip seperti yang saya alami tersebut.
 Jadi begini awal mula ceritanya, dari mulai kenal cimande sampai saya gede seperti ini belum pernah sekalipun saya coba jalanin ini aplikasi di container selain tomcat (sekarang sudah :D). Kemudian suatu hari muncullah titah dari Pak Bos untuk menjalankan cimande yang terdiri dari komposisi Struts2 + Spring + Hibernate di app server yang bernama Glassfish. 1, 2, 3, beberapa saat lancar-lancar aja (sampai muncul halaman login :P) dan akhirnya hal itupun terjadi. Masalah sederhana, gak mau login. Usut punya usut ternyata database tidak mengembalikan nilai yang diminta oleh client, usut punya usut lagi ternyata hibernate session factory yang diinject oleh spring bernilai kosong alias hibernate.cfg seakan tidak pernah dilahirkan. Anehnya di tomcat lancar-lancar saja, ya saya sadar kalo masalah beginian pasti saya yang salah.
 Berikut konfigurasi saya sebelumnya</p>
@@ -1494,9 +1503,9 @@ Dan berikut ini konfigurasi setelah saya rubah.</p>
   
   <entry>
     <title type="html"><![CDATA[Data Access Object (DAO) Dan Service/Facade Pattern, Apa Dan Mengapa]]></title>
-    <link href="http://diian.org/blog/2011/04/24/data-access-object-%28dao%29-dan-service-facade-pattern-apa-dan-mengapa/"/>
+    <link href="http://diian.org/blog/2011/04/24/data-access-object-dao-dan-service-facade-pattern-apa-dan-mengapa/"/>
     <updated>2011-04-24T00:00:00+07:00</updated>
-    <id>http://diian.org/blog/2011/04/24/data-access-object-(dao)-dan-service-facade-pattern-apa-dan-mengapa</id>
+    <id>http://diian.org/blog/2011/04/24/data-access-object-dao-dan-service-facade-pattern-apa-dan-mengapa</id>
     <content type="html"><![CDATA[<p>Sering saya mendapat pertanyaan dari teman maupun adik kelas tentang &ldquo;Gimana caranya bikin DAO?&rdquo;, &ldquo;Kenapa harus pake DAO?&rdquo;, ataupun pertanyaan paling general &ldquo;DAO itu apaan sih?&rdquo;. Maklum, saya memang yang paling ngeyel mengkritik masalah bentuk dan kerapian baris kode aplikasi bikinan rekan-rekan seperjuangan yang berhubungan dengan database/persistence, bahkan tidak jarang mengesampingkan bussines proccess apikasi itu sendiri. Yah memang terlalu teknis sih, tapi di dunia open source kerapian kode itu nomor wahid (mungkin :D), ditonton dunia gitu, berbeda dengan barang close source yang orang cuma tau itu barang tiba-tiba ada, walaupun kerapian kode itu tetap penting. Mungkin tulisan adalah sedikit bentuk curhat saya kepada banyak pihak yang menganggap saya sebagai orang yang paling meyebalkan urusan coding selama ini (sok teraniaya banget :P). Memang saya sering jawab &ldquo;cari di internet&rdquo; atau &ldquo;kan ada google&rdquo; sebelum saya sadar bahwa mau gak mau, gak mau mau, mau mau enggak, ataupun mau mau mau, sebagian siswa Indonesia malas mebaca tulisan yang sedikit ribet, sedikit panjang, ditambah lagi pake bahasa Belanda. Komplit dah, dan akhirnya memutuskan untuk bertanya pada orang sok tau seperti saya :D Berikut sedikit jawaban dari saya, semoga bermanfaat&hellip;
 Data Access Object
 Data Access Object (DAO) merupakan sebuah object yang menyediakan sebuah abstract interface terhadap beberapa database atau mekanisme persistence, menyediakan beberapa operasi tertentu tanpa mengekspos detail database. Penerapan konsep ini sering disebut dengan separation of concern dimana setiap kode dipisahkan berdasarkan fungsinya sehingga kode diatasnya hanya perlu mengetahui secara abstrak cara mengakses data tanpa perlu mengetahui bagaimana akses ke sumber data diimplementasikan. DAO sering dikaitkan dengan Java EE dan akses ke relational database melalu JDBC API, karena memang DAO berasal dari pedoman praktek Sun Microsystem. Kebanyakan peggunaan DAO adalah satu objek DAO untuk satu objek entity.
@@ -1672,9 +1681,9 @@ Berikut contoh penggunaan facade</p>
   
   <entry>
     <title type="html"><![CDATA[Cimande 2.0 RC, Apa Bedanya? (RESTFul #1)]]></title>
-    <link href="http://diian.org/blog/2010/10/18/cimande-2.0-rc-apa-bedanya%3F-%28restful-%231%29/"/>
+    <link href="http://diian.org/blog/2010/10/18/cimande-2-0-rc-apa-bedanya-restful-1/"/>
     <updated>2010-10-18T00:00:00+07:00</updated>
-    <id>http://diian.org/blog/2010/10/18/cimande-2.0-rc-apa-bedanya?-(restful-#1)</id>
+    <id>http://diian.org/blog/2010/10/18/cimande-2-0-rc-apa-bedanya-restful-1</id>
     <content type="html"><![CDATA[<p>Setelah berjuang sekitar beberapa bulan terakhir, akhirnya hari ini Cimande v2.0 RC resmi dirilis. Sesuai dengan judul blog saya kali ini, Cimande 2? Apa bedanya dengan yang sudah-sudah? Pada versi terbaru ini Cimande 2.0 menggunakan arsitektur RESTFul web service. Salah satu arsitektur web yang beberapa tahun terakhir ini lagi hot-hotnya, dianggap sebagai arsitektur yang cool, sederhana dan paling ramah bagi user/aplikasi desktop maupun mobile secara umum. Juga sejalan dengan dengan trend baru Web 2.0 yang mulai menjauh dari SOAP dan beralih ke konsep REST.
 Sedikit melenceng dari judul, pada bagian pertama ini saya belum akan membahas lebih detail mengenai teknis Cimande2, akan tetapi lebih ke konsep dan prinsip dari REST yang merupakan salah satu arsitektur yang digunakan oleh Cimande2 ini.
 Berikut sedikit sejarah singkat tentang arsitektur REST :</p>
@@ -1818,9 +1827,9 @@ Cukup sekian untuk saat ini, poin ke 3 dan ke 4 selanjutnya akan saya jabarkan p
   
   <entry>
     <title type="html"><![CDATA[JSP Taglib at Velocity, Nah Lho...]]></title>
-    <link href="http://diian.org/blog/2010/10/06/jsp-taglib-at-velocity-nah-lho.../"/>
+    <link href="http://diian.org/blog/2010/10/06/jsp-taglib-at-velocity-nah-lho/"/>
     <updated>2010-10-06T00:00:00+07:00</updated>
-    <id>http://diian.org/blog/2010/10/06/jsp-taglib-at-velocity-nah-lho&#8230;</id>
+    <id>http://diian.org/blog/2010/10/06/jsp-taglib-at-velocity-nah-lho</id>
     <content type="html"><![CDATA[<p>Nah ini kasus baru ketika saya menggunakan velocity sebagai presentation layer, yap salah satu keunggulan dari velocity adalah kecepatannya karena velocity tidak membutuhkan proses tranformasi dan kompilasi layaknya JSP. Namun sedikit mengingatkan tentang pepatah lama, tak ada gading yang tak retak. Dan berdasarkan info yang pernah saya dengar salah satu keunggulan JSP dibanding velocity adalah taglibnya, dilema deh? Karena sayangnya menggunakan taglib memang lebih menyenangkan :D sempat terpikirkan untuk memindahkan semua presentation layer ke JSP sebelum akhirnya saya main ke Website Struts2. Hahai sebuah pencerahan datang?
  Velocity tags are extensions of the generic Struts Tags provided by the framework. You can get jump right in just by knowing the structure in which the tags can be accessed: #s<em>tag </em>(&hellip;) &hellip; #end, where tag is any of the Struts Tags supported by the framework.
  Yayaya Velocity tags, dan berikut perbandingannya dengan JSP tags</p>
@@ -2334,9 +2343,9 @@ Cukup sekian untuk saat ini, poin ke 3 dan ke 4 selanjutnya akan saya jabarkan p
   
   <entry>
     <title type="html"><![CDATA[Menggunakan Spring Annotation (Struts2-Spring #2)]]></title>
-    <link href="http://diian.org/blog/2010/09/08/menggunakan-spring-annotation-%28struts2-spring-%232%29/"/>
+    <link href="http://diian.org/blog/2010/09/08/menggunakan-spring-annotation-struts2-spring-2/"/>
     <updated>2010-09-08T00:00:00+07:00</updated>
-    <id>http://diian.org/blog/2010/09/08/menggunakan-spring-annotation-(struts2-spring-#2)</id>
+    <id>http://diian.org/blog/2010/09/08/menggunakan-spring-annotation-struts2-spring-2</id>
     <content type="html"><![CDATA[<p>Ini lanjutan dari blog saya yang kemarin tentang Integrasi Struts2 dengan Spring Framework, dan yang ingin saya sharing kali ini gak akan jauh berbeda dari topik kemarin, yaitu tentang salah satu fitur dari Spring Framework yang sudah ada sejak versi 2.5 yaitu annotation. Dalam hal ini saya akan mencontohkan bagaimana melakukan autowiring terhadap DataSource (gak jauh dari yang kemarin, cuma ganti jadi anotasi doank).
 Kali ini saya membuat kasus (lohloh bikin kasus) dimana saya memiliki sebuah Data Access Object (DAO) untuk melakukan transaksi database, dan DAO ini membutuhkan DataSource untuk dapat melakukan tugasnya yang akan digunakan oleh Controller untuk menyampaikannya kepada Viewer Layer. Hehehehe?. Saya juga bingung gimana menggambarkannya.
 Langsung berangkat ke TKP.
@@ -2563,22 +2572,6 @@ Sedikit bonus :p berikut contoh tanpa menggunakan anotasi.</p>
  <pre style="font-size: 12px; margin: 0em; width: 100%; font-family: consolas,'Courier New',courier,monospace; background-color: #f9f9f9"> 16: ItemDao itemDao = daoImpl;</pre>
 Cape juga ternyata, selamat menikmati hidangannya.
 &lt;/p<pre></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Meruvian Menyambut Idul Fitri 1431 H]]></title>
-    <link href="http://diian.org/blog/2010/09/01/meruvian-menyambut-idul-fitri-1431-h/"/>
-    <updated>2010-09-01T00:00:00+07:00</updated>
-    <id>http://diian.org/blog/2010/09/01/meruvian-menyambut-idul-fitri-1431-h</id>
-    <content type="html"><![CDATA[<p>Hari ini merupakan hari ke dua saya di Meruvian Camp Depok dalam rangka kunjungan rutin. Menyenangkan ternyata walaupun saya sempat merasa sebagian dari mereka bakalan terusik dengan selembar checklist yang saya bawa :P Dan mulai dari kemarin malam hingga siang ini, merupakan moment yang cukup menarik menurut saya. Dimulai dari pemilihan kepala suku (setiap bulan ada kepala suku baru yang bertanggung jawab menjaga stabilitas nasional) hingga pagi ini sebelum kegiatan wajib dimulai. Sangat berkesan dimana pagi ini diadakan ritual semacam babat alas, mungkin yang satu ini lebih cocok disebut babat lumut atau mungkin sapu jogan. Apalah namanya, yang jelas ritual ini dilakuakan atas kesadaran semua penduduk Meruvian Depok untuk menyambut Hari kemenangan 1 Syawal 1431 H yang tinggal mengitung hari. Berikut beberapa foto ketika ritual sedang berlangsung.
-&nbsp;
-Kepala suku baru sedang memberi contoh bagaimana cara merawat benda keramat yang paling sering dibutuhkan dalam keadaan darurat :D
-Senyum itu ibadah lho?.
-Ikutan nampang juga (ikutan bantuin maksudnya)
-Sikat dan karbol, salah satu senjata yang ampuh untuk membasmi kuman
-Dan akhirnya ritual diakhiri dengan pembersihan camp secara menyeluruh
-Cukup kagum saya dengan kegiatan tersebut, dan memang inilah pelajaran yang terpenting diluar kompetensi mereka sebagai calon software developer (atau mungkin sudah) yaitu nilai kemandirian dan tanggung jawab terhadap lingkungan. Coding bakalan lebih tenang kalo tempatnya mendukung, betul gak?.</p>
 ]]></content>
   </entry>
   

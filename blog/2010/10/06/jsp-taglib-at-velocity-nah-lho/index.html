@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Yang Bikin Kita Susah Go Global - Dian Aditya</title>
+  <title>JSP Taglib at Velocity, Nah Lho... - Dian Aditya</title>
   <meta name="author" content="Dian Aditya">
 
   
-  <meta name="description" content="Kemarin saya diajakin ikutan seminar joget workflow oleh Pak Frans di kawasan mega kuningan, sesuatu yang belum pernah saya alami sebelumnya, seperti &hellip;">
+  <meta name="description" content="Nah ini kasus baru ketika saya menggunakan velocity sebagai presentation layer, yap salah satu keunggulan dari velocity adalah kecepatannya karena &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://diian.org/blog/2010/08/11/yang-bikin-kita-susah-go-global">
+  <link rel="canonical" href="http://diian.org/blog/2010/10/06/jsp-taglib-at-velocity-nah-lho">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="Dian Aditya" type="application/atom+xml">
@@ -86,7 +86,7 @@
   <header>
     
       
-        <h1 class="entry-title">Yang Bikin Kita Susah Go Global</h1>
+        <h1 class="entry-title">JSP Taglib at Velocity, Nah Lho...</h1>
       
     
     
@@ -103,7 +103,33 @@
   </header>
 
 
-<div class="entry-content"><p>Kemarin saya diajakin ikutan seminar joget workflow oleh Pak Frans di kawasan mega kuningan, sesuatu yang belum pernah saya alami sebelumnya, seperti pembicaranya yang full english dan para peserta yang usianya jelas jauh di atas saya (mungkin memang saya peserta termuda di sana :D). Sangat terasa &lsquo;global&#8217;nya bagi saya, mungkin salah satunya karena acaranya diselenggarakan di kantor kedubes Malaysia (walaupun sempat dikejutkan dengan suguhan lemper, semoga tidak diklaim juga sebagai makanan khas mereka) yang mau tidak mau membuat saya harus membandingkan dukungan pemerintah Malaysia dengan pemerintah Indonesia (yang belum saya lihat, red) dalam hal produk opensource butatan dalam negeri. Bukan bidang saya memang untuk menyinggung masalah-masalah beginian, namun disisi lain memang sedikit demi sedikit kita harus mulai merubah pola pikir kita sendiri yang sudah melekat sejak jaman penjajahan hingga sekarang. Yang mungkin mebuat kita susah untuk go global. Berikut beberapa hal yang sering saya perhatikan di sekitar lingkungan saya, bahkan saya sendiripun sempat mengalami. &ldquo;Kerja di luar kota? Jauh amat&rdquo; kata-kata ini yang dulu sering saya dengar dari teman-teman seangkatan ketika saya memutuskan untuk berangkat ke Meruvian Jakarta sekitar 3 &ndash; 4 bulan yang lalu, persis setelah lulus dari SMK tercinta. Yah mungkin ini salah satu faktornya mengapa kita susah banget untuk bisa go global, sebagian dari mereka masih berfikir tinggal dekat dengan keluarga adalah prioritas yang tidak bisa di ganggu gugat. Dan inilah salah satu sifat yang harus dibuang jauh-jauh, mengapa? Ini petuah yang saya dapat dari Pak Frans, &ldquo;Gimana bisa ke Australia atau keliling Eropa kalau ke luar kota yang masih di dalem negeri sendiri aja gak berani.&rdquo; &ldquo;Mending di sini aja, disana ada apan sih?&rdquo; sebagian dari kita masih sangat nyaman tinggal di tempat asal, &ldquo;kenapa musti susah-susah, mau makan sayur tinggal ambil di depan rumah, mau bebek tinggal ambil di belakang rumah&rdquo; disaat Pinky and The Brain diluar sana sedang berusaha membuat hama untuk mengurangi populasi bebek di seluruh dunia untuk memuluskan rencana besar mereka menguasai dunia. Kemungkinan yang belum sempat tefikirkan hingga akhirnya produk-produk produk luar negeri masuk sebelum barang kita sempat go global. Jadi, apakah kita masih akan memelihara sifat tersebut disaat negara lain mulai gencar mendobrak rumah yang kita pikir masih aman?</p>
+<div class="entry-content"><p>Nah ini kasus baru ketika saya menggunakan velocity sebagai presentation layer, yap salah satu keunggulan dari velocity adalah kecepatannya karena velocity tidak membutuhkan proses tranformasi dan kompilasi layaknya JSP. Namun sedikit mengingatkan tentang pepatah lama, tak ada gading yang tak retak. Dan berdasarkan info yang pernah saya dengar salah satu keunggulan JSP dibanding velocity adalah taglibnya, dilema deh? Karena sayangnya menggunakan taglib memang lebih menyenangkan :D sempat terpikirkan untuk memindahkan semua presentation layer ke JSP sebelum akhirnya saya main ke Website Struts2. Hahai sebuah pencerahan datang?
+ Velocity tags are extensions of the generic Struts Tags provided by the framework. You can get jump right in just by knowing the structure in which the tags can be accessed: #s<em>tag </em>(&hellip;) &hellip; #end, where tag is any of the Struts Tags supported by the framework.
+ Yayaya Velocity tags, dan berikut perbandingannya dengan JSP tags</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;s:form</span> <span class="na">action=</span><span class="s">&quot;updatePerson&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'> <span class="nt">&lt;s:textfield</span> <span class="na">label=</span><span class="s">&quot;First name&quot;</span> <span class="na">name=</span><span class="s">&quot;firstName&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'> <span class="nt">&lt;s:submit</span> <span class="na">value=</span><span class="s">&quot;Update&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'><span class="nt">&lt;/s:form&gt;</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p> dan dalam velocity dapat dituliskan seperti berikut</p>
+
+<pre>#sform ("action=updatePerson")
+    #stextfield ("label=First name" "name=firstName")
+    #ssubmit ("value=Update")
+#end
+</pre>
+
+
+<p> Dan akhirnya migrasi ke JSP pun untuk sementara dibatalkan :p</p>
 </div>
 
 
@@ -134,7 +160,7 @@
     
       <div class="sharing">
   
-  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://diian.org/blog/2010/08/11/yang-bikin-kita-susah-go-global/" data-via="" data-counturl="http://diian.org/blog/2010/08/11/yang-bikin-kita-susah-go-global/" >Tweet</a>
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://diian.org/blog/2010/10/06/jsp-taglib-at-velocity-nah-lho/" data-via="" data-counturl="http://diian.org/blog/2010/10/06/jsp-taglib-at-velocity-nah-lho/" >Tweet</a>
   
   
   <div class="g-plusone" data-size="medium"></div>
@@ -147,10 +173,10 @@
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2010/07/06/struts2-annotation-convention-plugin/" title="Previous Post: Struts2 Annotation (Convention Plugin)">&laquo; Struts2 Annotation (Convention Plugin)</a>
+        <a class="basic-alignment left" href="/blog/2010/09/29/memanfaatkan-struts-action-mapper-untuk-membuat-clean-url/" title="Previous Post: Memanfaatkan Struts Action Mapper untuk Membuat Clean URL">&laquo; Memanfaatkan Struts Action Mapper untuk Membuat Clean URL</a>
       
       
-        <a class="basic-alignment right" href="/blog/2010/08/18/baca-kode-ascii-dengan-jquery/" title="Next Post: Baca Kode ASCII Dengan JQuery">Baca Kode ASCII Dengan JQuery &raquo;</a>
+        <a class="basic-alignment right" href="/blog/2010/10/18/cimande-2-0-rc-apa-bedanya-restful-1/" title="Next Post: Cimande 2.0 RC, apa bedanya? (RESTFul #1)">Cimande 2.0 RC, apa bedanya? (RESTFul #1) &raquo;</a>
       
     </p>
   </footer>
@@ -164,7 +190,7 @@
       <noscript>Please enable JavaScript to view the comments powered by facebook</a></noscript>
 <div
   class="fb-comments"
-  data-href="http://diian.org/blog/2010/08/11/yang-bikin-kita-susah-go-global/"
+  data-href="http://diian.org/blog/2010/10/06/jsp-taglib-at-velocity-nah-lho/"
   data-num-posts="5"
   data-width="100%"></div>
     </div>

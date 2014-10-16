@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
-        <loc>http://diian.org/blog/2009/03/13/menjalankan-cimande-pada-netbeans-6.5/</loc>
+        <loc>http://diian.org/blog/2009/03/13/menjalankan-cimande-pada-netbeans-6-5/</loc>
         <lastmod>2014-10-15T22:48:42+07:00</lastmod>
     </url>
     <url>
-        <loc>http://diian.org/blog/2009/07/30/eclipselink-vs-eclipselink%2Bspring/</loc>
+        <loc>http://diian.org/blog/2009/07/30/eclipselink-vs-eclipselink-spring/</loc>
         <lastmod>2014-10-15T22:48:42+07:00</lastmod>
     </url>
     <url>
@@ -13,7 +13,7 @@
         <lastmod>2014-10-15T22:48:42+07:00</lastmod>
     </url>
     <url>
-        <loc>http://diian.org/blog/2010/01/03/struts-%2B-velocity-solusi-mudah-dan-ideal/</loc>
+        <loc>http://diian.org/blog/2010/01/03/struts-velocity-solusi-mudah-dan-ideal/</loc>
         <lastmod>2014-10-15T22:48:42+07:00</lastmod>
     </url>
     <url>
@@ -21,11 +21,11 @@
         <lastmod>2014-10-15T22:48:42+07:00</lastmod>
     </url>
     <url>
-        <loc>http://diian.org/blog/2010/05/20/swing-android%3F-gak-jauh-beda/</loc>
+        <loc>http://diian.org/blog/2010/05/20/swing-android-gak-jauh-beda/</loc>
         <lastmod>2014-10-15T22:48:42+07:00</lastmod>
     </url>
     <url>
-        <loc>http://diian.org/blog/2010/07/06/struts2-annotation-%28convention-plugin%29/</loc>
+        <loc>http://diian.org/blog/2010/07/06/struts2-annotation-convention-plugin/</loc>
         <lastmod>2014-10-15T22:48:42+07:00</lastmod>
     </url>
     <url>
@@ -46,7 +46,7 @@
     </url>
     <url>
         <loc>
-            http://diian.org/blog/2010/09/08/menggunakan-spring-annotation-%28struts2-spring-%232%29/
+            http://diian.org/blog/2010/09/08/menggunakan-spring-annotation-struts2-spring-2/
         </loc>
         <lastmod>2014-10-15T22:48:42+07:00</lastmod>
     </url>
@@ -61,29 +61,27 @@
         <lastmod>2014-10-15T22:48:42+07:00</lastmod>
     </url>
     <url>
-        <loc>http://diian.org/blog/2010/10/06/jsp-taglib-at-velocity-nah-lho.../</loc>
+        <loc>http://diian.org/blog/2010/10/06/jsp-taglib-at-velocity-nah-lho/</loc>
+        <lastmod>2014-10-15T22:48:42+07:00</lastmod>
+    </url>
+    <url>
+        <loc>http://diian.org/blog/2010/10/18/cimande-2-0-rc-apa-bedanya-restful-1/</loc>
         <lastmod>2014-10-15T22:48:42+07:00</lastmod>
     </url>
     <url>
         <loc>
-            http://diian.org/blog/2010/10/18/cimande-2.0-rc-apa-bedanya%3F-%28restful-%231%29/
+            http://diian.org/blog/2011/04/24/data-access-object-dao-dan-service-facade-pattern-apa-dan-mengapa/
         </loc>
         <lastmod>2014-10-15T22:48:42+07:00</lastmod>
     </url>
     <url>
         <loc>
-            http://diian.org/blog/2011/04/24/data-access-object-%28dao%29-dan-service-facade-pattern-apa-dan-mengapa/
+            http://diian.org/blog/2011/06/13/spring-classpath-resource-beda-middleware-beda-konfigurasi-tomcat-vs-glassfish/
         </loc>
         <lastmod>2014-10-15T22:48:42+07:00</lastmod>
     </url>
     <url>
-        <loc>
-            http://diian.org/blog/2011/06/13/spring-classpath-resource-beda-middleware-beda-konfigurasi-%28tomcat-vs-glassfish%29/
-        </loc>
-        <lastmod>2014-10-15T22:48:42+07:00</lastmod>
-    </url>
-    <url>
-        <loc>http://diian.org/blog/2011/07/14/cimande-2.0-rc2-release/</loc>
+        <loc>http://diian.org/blog/2011/07/14/cimande-2-0-rc2-release/</loc>
         <lastmod>2014-10-15T22:48:42+07:00</lastmod>
     </url>
     <url>
@@ -91,12 +89,12 @@
         <lastmod>2014-10-15T22:48:42+07:00</lastmod>
     </url>
     <url>
-        <loc>http://diian.org/blog/2011/11/08/deploy-cimande-pada-weblogic-10.3/</loc>
+        <loc>http://diian.org/blog/2011/11/08/deploy-cimande-pada-weblogic-10-3/</loc>
         <lastmod>2014-10-16T00:14:40+07:00</lastmod>
     </url>
     <url>
         <loc>
-            http://diian.org/blog/2011/11/12/criteria-query-hibernate-dan-jpa-2.0-%28jpa2-part-1%29/
+            http://diian.org/blog/2011/11/12/criteria-query-hibernate-dan-jpa-2-0-jpa2-part-1/
         </loc>
         <lastmod>2014-10-16T00:00:42+07:00</lastmod>
     </url>
@@ -107,7 +105,7 @@
         <lastmod>2014-10-15T23:53:37+07:00</lastmod>
     </url>
     <url>
-        <loc>http://diian.org/blog/2012/02/11/geliat-cloud-2012-tahunnya-paas%3F/</loc>
+        <loc>http://diian.org/blog/2012/02/11/geliat-cloud-2012-tahunnya-paas/</loc>
         <lastmod>2014-10-15T23:44:58+07:00</lastmod>
     </url>
     <url>
@@ -121,14 +119,12 @@
         <lastmod>2014-10-15T23:31:21+07:00</lastmod>
     </url>
     <url>
-        <loc>
-            http://diian.org/blog/2012/06/28/pakai-application-server-yang-mana%3F-%28ala-saya%29/
-        </loc>
+        <loc>http://diian.org/blog/2012/06/28/pakai-application-server-yang-mana-ala-saya/</loc>
         <lastmod>2014-10-15T23:23:02+07:00</lastmod>
     </url>
     <url>
         <loc>
-            http://diian.org/blog/2012/07/27/menggunakan-method-post-get-put-delete-pada-html-form-tag-bisakah%3F/
+            http://diian.org/blog/2012/07/27/menggunakan-method-post-get-put-delete-pada-html-form-tag-bisakah/
         </loc>
         <lastmod>2014-10-15T23:22:11+07:00</lastmod>
     </url>
@@ -145,15 +141,21 @@
         <lastmod>2014-10-15T23:05:00+07:00</lastmod>
     </url>
     <url>
+        <loc>
+            http://diian.org/blog/2014/10/17/gis-part-3-membuat-rest-api-dengan-s2rest-plugin/
+        </loc>
+        <lastmod>2014-10-17T01:04:15+07:00</lastmod>
+    </url>
+    <url>
         <loc>http://diian.org/robots.txt</loc>
         <lastmod>2014-10-15T22:44:56+07:00</lastmod>
     </url>
     <url>
         <loc>http://diian.org/</loc>
-        <lastmod>2014-10-16T00:14:40+07:00</lastmod>
+        <lastmod>2014-10-17T01:04:15+07:00</lastmod>
     </url>
     <url>
         <loc>http://diian.org/blog/archives/</loc>
-        <lastmod>2014-10-16T00:14:40+07:00</lastmod>
+        <lastmod>2014-10-17T01:04:15+07:00</lastmod>
     </url>
 </urlset>
